@@ -3,8 +3,8 @@
   import { examplePythonOutput, examplePythonScript } from "$lib";
 </script>
 
-<div class="grid min-h-screen place-items-center whitespace-nowrap py-10">
-  <div class="flex flex-col gap-4 lg:flex-row lg:gap-10">
+<div class="grid min-h-screen place-items-center whitespace-nowrap py-10 <sm:pb-6">
+  <div class="flex flex-col gap-2 lg:flex-row lg:gap-10">
     <div class="flex flex-col items-center justify-between gap-5 py-5 lg:items-end">
       <div class="<lg:hidden" />
       <div class="relative flex flex-col gap-6 lg:translate-y-10 lg:items-end">
