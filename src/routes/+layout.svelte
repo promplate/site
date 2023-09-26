@@ -1,8 +1,10 @@
 <script>
   import { dev } from "$app/environment";
-  import { PUBLIC_HEAD_SCRIPTS as headScripts } from "$env/static/public";
+  import { PUBLIC_HEAD_SCRIPTS } from "$env/static/public";
   import "@unocss/reset/tailwind-compat.css";
   import "uno.css";
+
+  const headScripts = atob(PUBLIC_HEAD_SCRIPTS ?? "");
 </script>
 
 <svelte:head>
