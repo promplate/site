@@ -17,7 +17,7 @@ Translate the following dialog to \`ja_JP\`:
 
 chain = reply + translate
 
-complete = ChatComplete(model="gpt-3.5-turbo")
+chain.complete = ChatComplete(model="gpt-3.5-turbo")
 
 def main():
     """🚀 run the chain"""
@@ -26,7 +26,7 @@ def main():
 
     name = "John"
 
-    return chain.run(locals(), complete)["__result__"]
+    return chain.run(locals()).result
 
 `.trim();
 
@@ -35,5 +35,5 @@ export const examplePythonOutput = `
 </reply/> + </translate/>
 
 >>> main()
-ジョン：現在の時刻は午前2時11分です。
+'ジョン：現在の時刻は午前2時11分です。'
 `.trim();
