@@ -3,17 +3,14 @@ import type { RequestHandler } from "@sveltejs/kit";
 import type { Post } from "$lib/types";
 import component from "./OG.svelte";
 
-export const GET: RequestHandler = async ({ url: { href, pathname }, fetch }) => {
-  if (href.endsWith("?")) href = href.slice(0, -1);
-  href = href.replace("/og/", "/");
-  pathname = pathname.replace("/og/", "/");
-  // after normalization
+export const GET: RequestHandler = async ({ url: { origin }, params, fetch }) => {
+  const path: string = params.path ?? "";
 
-  const context: { href: string; title?: string; subtitle?: string } = { href: decodeURI(href) };
+  const context: { href: string; title?: string; subtitle?: string } = { href: `${origin}/${decodeURI(path)}` };
 
-  if (pathname.startsWith("/py/")) {
+  if (path.startsWith("py/")) {
     const posts: Post[] = await fetch("/api/docs").then((res) => res.json());
-    const post = posts.find((post) => post.slug === pathname.replace("/py/", ""));
+    const post = posts.find((post) => post.slug === path.replace("py/", ""));
     if (post) {
       context.title = post.title;
       context.subtitle = post.description;
