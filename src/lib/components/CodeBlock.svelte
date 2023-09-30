@@ -12,7 +12,7 @@
   };
 </script>
 
-<section class:shrink-0={!collapse} class="overflow-y-scroll b-1 b-white/10 rounded-md bg-#121212 <sm:w-[calc(100vw-3rem)]">
+<section class:shrink-0={!collapse} class="not-prose overflow-y-scroll b-1 b-white/10 rounded-md bg-#121212">
   {#key code}
     {#await loadCode()}
       <pre class="text-white/70">{code}</pre>
@@ -23,10 +23,6 @@
 </section>
 
 <style>
-  section::-webkit-scrollbar {
-    --uno: hidden;
-  }
-
   :global(pre) {
     --uno: p-5 text-xs sm:text-sm font-mono w-fit;
   }

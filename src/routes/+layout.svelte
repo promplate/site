@@ -35,10 +35,14 @@
 
 <style>
   :global(html) {
-    --uno: bg-neutral-9 text-white flex flex-col items-center;
+    --uno: bg-neutral-9 text-white flex flex-col items-center overflow-x-hidden;
   }
 
   :global(*)::selection {
     --uno: bg-white/15;
+  }
+
+  :global(*)::-webkit-scrollbar {
+    --uno: hidden;
   }
 </style>
