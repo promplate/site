@@ -20,9 +20,9 @@ We are using `OpenAI` just for demonstration. In fact, **you can use any LLM as 
 
 ### Make LLM Calls
 
-First, **Open a python REPL** 💻
+First, **Open a python REPL** 💻 (`ipython` or `jupyter` are OK. Just any REPL you like)
 
-(`ipython` or `jupyter` are OK. Just any REPL you like)
+**All the code below should run "as is"**, which means you can copy and paste them in your terminal and it will work fine.
 
 <CodeBlock code={`
 >>> from promplate.llm.openai import ChatComplete  # this simply wraps OpenAI's SDK
@@ -77,3 +77,112 @@ This principle is consistent and holds true in all contexts and across different
 1 + 1 = 2 is considered a basic and universally accepted mathematical fact, forming the foundation for more complex mathematical operations and calculations.\n
 `.trim()} />
 </Details>
+
+### Prompting with Template
+
+There must be something dynamic in your prompt, like **user queries**, **retrieved context**, **search results**, etc.
+In **promplate**, simply use `{{ }}` to insert dynamic data.
+
+<CodeBlock code={`
+>>> import time
+>>> from promplate import Template
+>>> greet = Template("Greet me. It is {{ time.asctime() }} now.")
+>>> greet.render(locals())
+'Greet me. It is Sun Oct  1 03:56:02 2023 now.'
+`.trim()} />
+
+You can run the prompt by `complete` we created before
+
+<CodeBlock code={`
+>>> complete(_)
+'Good morning!'
+`.trim()} />
+
+Wow, it works fine. In fact, you can use any python expression inside `{{ }}`.
+
+### Turning a complex task into small pieces
+
+Sometimes we don't use a single prompt to complete. Here are some reasons:
+
+- Describing a complex task in a single prompt may be difficult
+- Splitting big task into small ones maybe can reduce the total token usage
+- If you need structural output, it is easier to specifying data formats separately
+- We human can think quicker after breaking task into parts
+- Breaking big tasks into sub tasks may enhance interpretability, reducing debugging time
+- ...
+
+In `prompate`, We use a `Node` to represent a single "task". You can initialize a `Task` with a string:
+
+<CodeBlock code={`
+>>> from promplate import Node
+>>> greet = Node("Greet me. It is {{ time.asctime() }} now.")
+>>> greet.render(locals())
+'Greet me. It is Sun Oct  1 04:16:04 2023 now.'
+`.trim()} />
+
+A `Node` acts like a `Template`, but **there are far more utilities**:
+
+<CodeBlock code={`
+>>> greet = Node("Greet me. It is {{ time.asctime() }} now.", locals())
+>>> greet.render()  # you have passed the context during the node's initialization
+'Greet me. It is Sun Oct  1 04:16:54 2023 now.'
+`.trim()} />
+
+Magically, you can **add two nodes together**:
+
+<CodeBlock code={`
+>>> translate = Node('translate """{{ __result__ }}""" into {{ target_language }}')
+>>> chain = greet + translate  # this represents the pipeline of "greeting in another language"
+>>> chain.run({"target_language": "zh_CN"}, complete).result
+'早上好！'
+`.trim()} />
+
+Mention that the return type of `.run()` is `ChainContext` which combines the context passed everywhere in a right order.
+`__result__` is the output of last `Node`. It is automatically assigned during `.run()`. You can access it inside the template.
+Outside the template, you can use `.result` of a `ChainContext` to get the last output.
+
+The following three expressions should return the same string:
+
+<CodeBlock code={`
+>>> template = Template("...")
+>>> complete(template.render({}))
+`.trim()} />
+
+<CodeBlock code={`
+>>> Node("...").run({})["__result__"]
+`.trim()} />
+
+<CodeBlock code={`
+>>> Node("...").run({}).result
+`.trim()} />
+
+This part may be a bit more complex, but believe me, this enhances the flexibility of this framework and you will like it.
+
+### Registering callbacks
+
+**There are sometimes some work can't be done without our code.** such as:
+
+- LLM returns string, while we may want to parse it into structural data format like `dict` or `list`
+- We may need to log the intermediate variables to see whether the previous nodes work fine
+- We may modify context dynamically during a chain running
+- ...
+
+In `promplate`, you can register a callback everytime before or after a node runs.
+
+<CodeBlock code={`
+>>> @greet.post_process
+... def log_greet_result(context):
+...     print(context.result)
+...     print(context["target_language"])
+...
+>>> chain.run({"target_language": "zh_CN"}, complete).result
+Good morning!
+zh_CN
+'早上好！'
+`.trim()} />
+
+Congratulations 🎉 You've learnt the basic paradigm of using `promplate` for prompt engineering.
+
+---
+
+Thanks for reading. There are still lots of features not mentioned here. Learn more in other pages 🤗
