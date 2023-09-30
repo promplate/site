@@ -1,0 +1,15 @@
+---
+title: Introduction
+description: Introducing Promplate
+---
+
+### What is Promplate
+
+```
+</Promplate/> = /prompt/ + <template>
+```
+
+Promplate is **a prompting framework** focusing on developing experience.
+However, it can also be a super-convenient **SDK for simple LLM calls**.
+
+Promplate progressively enhance your prompting workflow.

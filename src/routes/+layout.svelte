@@ -35,7 +35,7 @@
 
 <style>
   :global(html) {
-    --uno: bg-neutral-9 text-white;
+    --uno: bg-neutral-9 text-white flex flex-col items-center;
   }
 
   :global(*)::selection {
