@@ -7,9 +7,9 @@
 
   const headScripts = atob(PUBLIC_HEAD_SCRIPTS ?? "");
 
-  const ogTitle = "Promplate Docs";
+  const ogTitle = "Promplate 中文文档";
   const ogImage = $page.url.origin + "/og" + $page.url.pathname;
-  const ogDescription = "Documentation site for Promplate the prompting framework";
+  const ogDescription = "提示工程框架 Promplate 的官方中文文档";
 </script>
 
 <svelte:head>

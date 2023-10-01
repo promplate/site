@@ -20,7 +20,7 @@ chain = reply + translate
 chain.complete = ChatComplete(model="gpt-3.5-turbo-1106")
 
 def main():
-    """🚀 run the chain"""
+    """🚀 执行这整个 chain 🚀"""
 
     import time
 

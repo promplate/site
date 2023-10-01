@@ -21,7 +21,7 @@
           <h1 class="text-2xl font-mono lg:(font-semibold text-shadow-md text-shadow-color-black)">
             <span class="mr-0.7 <lg:text-white/30">&lt;/</span>promplate<span class="ml-0.7 <lg:text-white/30">/&gt;</span>
           </h1>
-          <h2 class="text-xs tracking-1 font-serif uppercase">the prompting framework</h2>
+          <h2 class="text-xs tracking-1 font-serif uppercase">提示工程框架</h2>
         </div>
         <div class="flex flex-row gap-3">
           <a href="https://pepy.tech/project/promplate">
