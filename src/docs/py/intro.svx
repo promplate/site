@@ -3,6 +3,8 @@ title: Introduction
 description: Introducing Promplate
 ---
 
+### Contents
+
 ### What is Promplate
 
 ```
