@@ -1,14 +1,11 @@
 <script lang="ts">
-  import type { Highlighter } from "shikiji";
   import { getHighlighter } from "shikiji";
   export let code: string;
   export let collapse = false;
 
-  let shiki: Highlighter;
-
   const loadCode = async () => {
-    shiki = shiki ?? (await getHighlighter({ themes: ["vitesse-dark"], langs: ["python"] }));
-    return shiki.codeToHtml(code, { lang: "python", theme: "vitesse-dark" });
+    window.shiki = window.shiki ?? (await getHighlighter({ themes: ["vitesse-dark"], langs: ["python"] }));
+    return window.shiki.codeToHtml(code, { lang: "python", theme: "vitesse-dark" });
   };
 </script>
 
