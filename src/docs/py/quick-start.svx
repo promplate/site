@@ -1,6 +1,6 @@
 ---
-title: Quick Start
-description: Let's begin Prompting in 1 minute
+title: 〇门槛 快速上手
+description: 一分钟速成提示工程！
 ---
 
 <script>
@@ -8,68 +8,74 @@ import CodeBlock from "$lib/components/CodeBlock.svelte"
 import Details from "$lib/components/Details.svelte"
 </script>
 
-### Installation with `pip install` 
+### 直接 `pip install` 安装 🌟
 
-Directly install from [PyPI](https://pypi.org/project/promplate/):
+从 [PyPI](https://pypi.org/project/promplate/) 安装：
 
 ```
 pip install promplate[openai]
 ```
 
-We are using `OpenAI` just for demonstration. In fact, **you can use any LLM as you want**.
+你也可以用任何你喜欢的源（比如以清华源为例）：
 
-### Make LLM Calls
+```
+pip install promplate[openai] -i https://pypi.tuna.tsinghua.edu.cn/simple
+```
 
-First, **Open a python REPL** 💻 (`ipython` or `jupyter` are OK. Just any REPL you like)
+我们只是用 `OpenAI` 来做演示。实际上，**你可以使用任何你想要的LLM**。
 
-**All the code below should run "as is"**, which means you can copy and paste them in your terminal and it will work fine.
+### 让LLM生成文本！OpenAI 启动！
+
+首先，**打开一个python REPL** 💻 （或者`ipython`或者`jupyter`都可以。**任何你喜欢的python终端都可以**）
+
+**下面的所有代码都可以直接运行**，只要你是一行行复制粘贴过去的，都可以正常得出结果。
 
 <CodeBlock code={`
->>> from promplate.llm.openai import ChatComplete  # this simply wraps OpenAI's SDK
+>>> from promplate.llm.openai import ChatComplete  # 这个类只是对OpenAI的官方SDK的封装而已
 >>> complete = ChatComplete(model="gpt-3.5-turbo-1106", api_key="...")
 `.trim()} />
 
-> The `api_key` should be filled with your API Key from [OpenAI Platform](https://platform.openai.com/account/api-keys)
+> 在 `api_key` 填你的 [API Key](https://platform.openai.com/account/api-keys) 就行
 
-Then call it simply with a string:
+然后只需用一个字符串来调用它：
 
 <CodeBlock code={`
 >>> complete("hi")
 'Hello! How can I assist you today?'
 `.trim()} />
 
-<Details summary="If you don't have an OpenAI API Key 🔑">
-You could use our FREE proxy site as <code>api_base</code> like this:
+<Details summary="😭😭 如果你没有 API Key">
+我有个教育目的的免费代理站，你不用 API Key 也能免费使用。像这样填写 <code>api_base</code> 字段即可：
 <CodeBlock code={`
 >>> from promplate.llm.openai import ChatComplete
 >>> complete = ChatComplete(model="gpt-3.5-turbo-1106", api_base="https://promplate.dev")
->>> complete("hi")  # this simply wraps OpenAI's SDK
+>>> complete("hi")
 'Hello! How can I assist you today?'
 `.trim()} />
 </Details>
 
-<Details summary="If you want to use instruct models 🤔">
-Simply replace <code>ChatComplete</code> by <code>TextComplete</code>:
+<Details summary="如果你想使用 instruct 模型 🤔">
+只需简单地将 <code>ChatComplete</code> 替换为 <code>TextComplete</code>：
 <CodeBlock code={`
 >>> from promplate.llm.openai import TextComplete
 >>> complete = TextComplete(model="gpt-3.5-turbo-instruct", api_key="...")
 >>> complete("I am")
 ' just incredibly proud of the team, and their creation of a brand new ship makes'
 `.trim()} />
-And you can pass parameters when calling a <code>Complete</code> instance:
+当调用 <code>Complete</code> 实例时，你可以传递参数，比如 temperature，也可以在初始化时修改参数：
 <CodeBlock code={`
 >>> complete("1 + 1 = ", temperature=0, max_tokens=1)
 '2'
 `.trim()} />
 </Details>
 
-<Details summary="If you prefer to stream the response 👀">
-It is still super easy, just use <code>ChatGenerate</code>:
+<Details summary="想迭代流式响应也很简单 👀">
+这仍然非常简单，只需使用 <code>ChatGenerate</code>：
 <CodeBlock code={`
 >>> from promplate.llm.openai import ChatGenerate
 >>> generate = ChatGenerate(model="gpt-3.5-turbo-1106", api_key="...")
 >>> for i in generate("Explain why 1 + 1 = 2"):
-...     print(i, end="", flush=True)  # this will print generated tokens gradually
+...     print(i, end="", flush=True)  # 这会逐渐打印生成的token
 ...
 The equation 1 + 1 = 2 is a fundamental principle in mathematics and arithmetic. It represents the addition operation, which involves combining two quantities or numbers to find their sum.\n
 In this case, when we add 1 to another 1, we are essentially combining or merging two individual units or quantities. By doing this, we end up with a total count of two. Therefore, the result is 2.\n
@@ -78,10 +84,10 @@ This principle is consistent and holds true in all contexts and across different
 `.trim()} />
 </Details>
 
-### Prompting with Template
+### 模板！如何使用 Promplate 的模板表示动态的 prompt
 
-There must be something dynamic in your prompt, like **user queries**, **retrieved context**, **search results**, etc.
-In **promplate**, simply use `{{ }}` to insert dynamic data.
+在你的提示中必然有一些动态的内容，比如**用户输入的问题**，**从数据库中检索到的数据**，**网上搜索的结果**等。
+在 **promplate** 中，只需使用 `{{ }}` 就可以插入动态数据。
 
 <CodeBlock code={`
 >>> import time
@@ -91,27 +97,29 @@ In **promplate**, simply use `{{ }}` to insert dynamic data.
 'Greet me. It is Sun Oct  1 03:56:02 2023 now.'
 `.trim()} />
 
-You can run the prompt by `complete` we created before
+借助刚刚创建的 `complete` 对象来执行它：
 
 <CodeBlock code={`
->>> complete(_)
+>>> complete(_)  # _ 在 REPL 中就是上一个表达式的值
 'Good morning!'
 `.trim()} />
 
-Wow, it works fine. In fact, you can use any python expression inside `{{ }}`.
+可以看到，它根据我们的当前时间给出了合适的问候语。
 
-### Turning a complex task into small pieces
+实际上，你可以在 `{{ }}` 里面使用任何python表达式。
 
-Sometimes we don't use a single prompt to complete. Here are some reasons:
+### 问题有点复杂？分解成子问题逐个解决！
 
-- Describing a complex task in a single prompt may be difficult
-- Splitting big task into small ones maybe can reduce the total token usage
-- If you need structural output, it is easier to specifying data formats separately
-- We human can think quicker after breaking task into parts
-- Breaking big tasks into sub tasks may enhance interpretability, reducing debugging time
+有时候需要组合多个 prompt 来完成任务：
+
+- 如果任务比较复杂，可能很难在一个 prompt 中描述清楚
+- 将大任务分解成小任务分别执行有可能可以减少 token 消耗量
+- 如果你要让模型输出结构化的数据（通过XML或者JSON），往往先生成正常结果再
+- 将任务分解成部分来完成是符合人类直觉的
+- 将大任务分解成子任务可能会增强可解释性，debug 时更容易定位错误
 - ...
 
-In `prompate`, We use a `Node` to represent a single "task". You can initialize a `Task` with a string:
+在 `prompate` 中，我们使用 `Node` 来表示一个单一的"任务"。你可以用一个字符串来初始化一个 `Task`：
 
 <CodeBlock code={`
 >>> from promplate import Node
@@ -120,28 +128,30 @@ In `prompate`, We use a `Node` to represent a single "task". You can initialize 
 'Greet me. It is Sun Oct  1 04:16:04 2023 now.'
 `.trim()} />
 
-A `Node` acts like a `Template`, but **there are far more utilities**:
+一个 `Node` 就是一个加了**许多实用功能**的 `Template` ：
 
 <CodeBlock code={`
 >>> greet = Node("Greet me. It is {{ time.asctime() }} now.", locals())
->>> greet.render()  # you have passed the context during the node's initialization
+>>> greet.render()  # 你已经在这个 Node 初始化时传递了上下文
 'Greet me. It is Sun Oct  1 04:16:54 2023 now.'
 `.trim()} />
 
-Magically, you can **add two nodes together**:
+像魔法一样，你可以直接**将两个节点相加**，表示先后连接的顺序：
 
 <CodeBlock code={`
 >>> translate = Node('translate """{{ __result__ }}""" into {{ target_language }}')
->>> chain = greet + translate  # this represents the pipeline of "greeting in another language"
+>>> chain = greet + translate  # 这表示了"用中文打招呼"的流程
 >>> chain.run({"target_language": "zh_CN"}, complete).result
 '早上好！'
 `.trim()} />
 
-Mention that the return type of `.run()` is `ChainContext` which combines the context passed everywhere in a right order.
-`__result__` is the output of last `Node`. It is automatically assigned during `.run()`. You can access it inside the template.
-Outside the template, you can use `.result` of a `ChainContext` to get the last output.
+注意 `.run()` 的返回类型是 `ChainContext`，这是一个 `dict` 的子类，但是比 `dict` 多了一些东西：
 
-The following three expressions should return the same string:
+- `__result__` 键在 `.run()` 时被自动分配为上一个 `Node` 的输出，你可以在模板中用 `{{ __result__ }}` 访问它；
+
+- 在模板外部，你可以使用 `ChainContext` 的 `.result` 来获取最后的输出。
+
+以下三个表达式应该返回相同的字符串：
 
 <CodeBlock code={`
 >>> template = Template("...")
@@ -156,18 +166,20 @@ The following three expressions should return the same string:
 >>> Node("...").run({}).result
 `.trim()} />
 
-This part may be a bit more complex, but believe me, this enhances the flexibility of this framework and you will like it.
+这部分可能有点难理解。这是为了这个框架的灵活性。事实上，等你的流水线越来越长了，你会发现这就是最佳实践。
 
-### Registering callbacks
+### Agent = LLM + Tools! 给 `Chain` 注册回调！
 
-**There are sometimes some work can't be done without our code.** such as:
+有些事情LLM做不了，更适合用代码来完成。例如：
 
-- LLM returns string, while we may want to parse it into structural data format like `dict` or `list`
-- We may need to log the intermediate variables to see whether the previous nodes work fine
-- We may modify context dynamically during a chain running
+- LLM只会返回字符串，但我们有时需要将其解析为结构化的数据格式，如 `dict` 或 `list`
+- `Chain` 默认只保留最新的 `__result__`，而可能也需要保留下来中间的 `Node` 的输出
+- 后一个 `Node` 可能不能直接使用前一个 `Node` 的结果，而是需要进行一些处理
 - ...
 
-In `promplate`, you can register a callback everytime before or after a node runs.
+在 `promplate` 中，你可以在 LLM 运行前后分别注册一个或多个回调，分别称为"预处理"和"后处理"
+
+除了在 `Node` 初始化时传入，还可以用装饰器的方式注册回调：
 
 <CodeBlock code={`
 >>> @greet.post_process
@@ -181,8 +193,8 @@ zh_CN
 '早上好！'
 `.trim()} />
 
-Congratulations 🎉 You've learnt the basic paradigm of using `promplate` for prompt engineering.
+上面这是一个将第一个 `Node` 的结果 print 出来的回调。事实上，你可以在回调中随意读取和写入 `context`
 
 ---
 
-Thanks for reading. There are still lots of features not mentioned here. Learn more in other pages 🤗
+恭喜你 🎉 你已经学会了使用 `promplate` 进行提示工程的基本范式。感谢你的阅读！还有很多没有提到的特性在这个速成教程中没有提到。你可以前往其它页面了解更多 🤗
