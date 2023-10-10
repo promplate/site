@@ -3,7 +3,11 @@ import type { RequestHandler } from "@sveltejs/kit";
 import type { Post } from "$lib/types";
 import component from "./OG.svelte";
 
+let fontData: ArrayBuffer | null = null;
+
 export const GET: RequestHandler = async ({ url: { origin }, params, fetch }) => {
+  fontData = fontData ?? (await fetch("/inter-latin-600-normal.ttf").then((res) => res.arrayBuffer()));
+
   const path: string = params.path ?? "";
 
   const context: { href: string; title?: string; subtitle?: string } = { href: `${origin}/${decodeURI(path)}` };
@@ -18,5 +22,5 @@ export const GET: RequestHandler = async ({ url: { origin }, params, fetch }) =>
   }
 
   const html = component.render(context).html.replaceAll("class=", "tw=");
-  return await ImageResponse(html, {});
+  return await ImageResponse(html, { fonts: [{ name: "inter", data: fontData }] });
 };
