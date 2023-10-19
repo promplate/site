@@ -2,7 +2,7 @@ import type { Highlighter } from "shikiji";
 
 declare global {
   interface Window {
-    shiki: Highlighter;
+    cache: Record<string, Highlighter>;
   }
 
   namespace App {

@@ -11,13 +11,13 @@
     "lint": "eslint ."
   },
   "devDependencies": {
-    "@ethercorps/sveltekit-og": "2.0.1",
+    "@ethercorps/sveltekit-og": "2.0.2",
     "@iconify/json": "latest",
     "@julr/unocss-preset-heropatterns": "^1.0.2",
     "@sveltejs/adapter-vercel": "^3.0.3",
-    "@sveltejs/kit": "^1.25.2",
-    "@typescript-eslint/eslint-plugin": "^6.7.5",
-    "@typescript-eslint/parser": "^6.7.5",
+    "@sveltejs/kit": "^1.26.0",
+    "@typescript-eslint/eslint-plugin": "^6.8.0",
+    "@typescript-eslint/parser": "^6.8.0",
     "@unocss/eslint-config": "^0.56.5",
     "@unocss/extractor-svelte": "^0.56.5",
     "@unocss/reset": "^0.56.5",
@@ -28,16 +28,18 @@
     "rehype-slug": "^6.0.0",
     "remark-toc": "^9.0.0",
     "remark-unwrap-images": "^4.0.0",
-    "shikiji": "^0.6.9",
+    "shikiji": "^0.6.10",
     "svelte": "^4.2.1",
     "svelte-check": "^3.5.2",
     "tslib": "^2.6.2",
     "typescript": "^5.2.2",
     "unocss": "^0.56.5",
-    "vite": "^4.4.11"
+    "vite": "^4.5.0"
   },
   "type": "module",
   "dependencies": {
-    "@vercel/analytics": "^1.1.0"
+    "@vercel/analytics": "^1.1.1",
+    "openai": "^4.12.4",
+    "partial-json": "^0.1.2"
   }
 }

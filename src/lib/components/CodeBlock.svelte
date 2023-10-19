@@ -2,10 +2,16 @@
   import { getHighlighter } from "shikiji";
   export let code: string;
   export let collapse = false;
+  export let lang = "python";
+
+  const cachedGetHighlighter = async () => {
+    window.cache = window.cache ?? {};
+    window.cache[lang] = window.cache[lang] ?? (await getHighlighter({ themes: ["vitesse-dark"], langs: [lang] }));
+    return window.cache[lang];
+  };
 
   const loadCode = async () => {
-    window.shiki = window.shiki ?? (await getHighlighter({ themes: ["vitesse-dark"], langs: ["python"] }));
-    return window.shiki.codeToHtml(code, { lang: "python", theme: "vitesse-dark" });
+    return (await cachedGetHighlighter()).codeToHtml(code, { lang, theme: "vitesse-dark" });
   };
 </script>
 
