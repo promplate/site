@@ -39,7 +39,8 @@
   "type": "module",
   "dependencies": {
     "@vercel/analytics": "^1.1.1",
+    "json-beautify": "^1.1.1",
     "openai": "^4.12.4",
-    "partial-json": "^0.1.2"
+    "partial-json": "0.1.3"
   }
 }

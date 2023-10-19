@@ -3,8 +3,10 @@
   import { parse } from "partial-json";
   import { OpenAI } from "openai";
   import { onMount } from "svelte";
+  import * as env from "$env/static/public";
+  import beautify from "json-beautify";
 
-  const openai = new OpenAI({ apiKey: import.meta.env.PUBLIC_OPENAI_API_KEY ?? "", baseURL: import.meta.env.PUBLIC_OPENAI_API_BASE, dangerouslyAllowBrowser: true });
+  const openai = new OpenAI({ apiKey: env.PUBLIC_OPENAI_API_KEY ?? "", baseURL: env.PUBLIC_OPENAI_API_BASE, dangerouslyAllowBrowser: true });
 
   let running = false;
   let loading = true;
@@ -54,7 +56,7 @@
 
   const show = (json_string: string) => {
     try {
-      return JSON.stringify(parse(json_string), reviver, 4).replaceAll(String(nanPlaceholder), "NaN").replaceAll(String(infPlaceholder), "Infinity").replaceAll(String(_infPlaceholder), "-Infinity");
+      return beautify(parse(json_string), reviver, 3, 35).replaceAll(String(nanPlaceholder), "NaN").replaceAll(String(infPlaceholder), "Infinity").replaceAll(String(_infPlaceholder), "-Infinity");
     } catch (e) {
       return "";
     }
