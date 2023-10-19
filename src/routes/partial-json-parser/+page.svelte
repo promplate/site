@@ -71,7 +71,7 @@
     <div class="w-[calc(100vw-4rem)] 2xl:w-xl lg:w-md md:w-xl sm:w-lg xl:w-lg">
       <div class="mb-5 flex flex-row select-none items-center justify-center gap-1.5 whitespace-nowrap rounded bg-white/3 px-4 py-3 text-sm">
         <div class="i-ri-openai-fill text-lg text-white/50" />
-        <div>Raw Partial JSON</div>
+        <div>LLM 流式输出的 JSON</div>
       </div>
       <div class:op-50={loading} class="flex flex-col transition-opacity lg:h-[calc(100vh-18.5rem)]">
         <CodeBlock collapse lang="json" code={json_string} />
@@ -80,12 +80,12 @@
     <div class="w-[calc(100vw-4rem)] 2xl:w-xl lg:w-md md:w-xl sm:w-lg xl:w-lg">
       <div class="mb-5 flex flex-row select-none items-center justify-center gap-1.5 whitespace-nowrap rounded bg-white/3 px-4 py-3 text-sm">
         <div class="i-ri-javascript-fill text-lg text-white/50" />
-        <div>Parsed Partial JSON</div>
+        <div>解析后的合法 JSON</div>
       </div>
       <div class:op-50={loading} class="flex flex-col transition-opacity lg:h-[calc(100vh-18.5rem)] [&>section]:(b-2 b-white/70)">
         <CodeBlock collapse lang="json" code={show(json_string)} />
       </div>
     </div>
   </div>
-  <button class="w-full rounded bg-white py-3 font-bold tracking-widest uppercase text-neutral-9 transition-all hover:bg-white/90" class:op-80={running} on:click={runDemo}>show another example</button>
+  <button class="w-full rounded bg-white py-3 font-bold tracking-widest uppercase text-neutral-9 transition-all hover:bg-white/90" class:op-80={running} on:click={runDemo}>再试一次</button>
 </div>
