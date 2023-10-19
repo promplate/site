@@ -24,6 +24,6 @@ async function getPosts() {
 }
 
 export async function GET() {
-  // return json(posts.length ? posts : await getPosts());
-  return json(await getPosts());
+  return json(posts.length ? posts : await getPosts());
+  // return json(await getPosts());
 }

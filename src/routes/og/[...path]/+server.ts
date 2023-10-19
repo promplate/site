@@ -20,10 +20,10 @@ export const GET: RequestHandler = async ({ url: { origin }, params, fetch }) =>
       context.subtitle = post.description;
     }
   } else if (path === "partial-json-parser") {
-    context.title = "Partial JSON Parsing Demo";
+    context.title = "解析不完整 JSON";
     context.subtitle = "Streaming LLM generated JSON";
   }
 
   const html = component.render(context).html.replaceAll("class=", "tw=");
-  return await ImageResponse(html, { fonts: [{ name: "inter", data: fontData }] });
+  return await ImageResponse(html, { fonts: [{ name: "inter", data: fontData! }] });
 };

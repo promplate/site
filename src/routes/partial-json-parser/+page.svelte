@@ -32,7 +32,7 @@
       model: "gpt-3.5-turbo-1106",
       messages: [
         { role: "system", content: "your answer should be a valid JSON string, with no code block. Just the JSON, without anything else." },
-        { role: "user", content: "I am learning JSON. Please give me a complex nested JSON example containing short strings, arrays, objects, NaN, Infinity, booleans, null, scientific notation floats and a few emojis represented by unicode chars. Note that you should beautify your JSON response." },
+        { role: "user", content: "I am learning JSON. Please give me a complex nested JSON example containing short strings, arrays, objects, NaN, Infinity, booleans, null, scientific notation floats and a few emojis represented by unicode chars. Note that you should beautify your JSON response. 出现的所有字符串都用中文。" },
       ],
       temperature: 1.1,
       stream: true,
