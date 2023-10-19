@@ -6,7 +6,7 @@ import component from "./OG.svelte";
 let fontData: ArrayBuffer | null = null;
 
 export const GET: RequestHandler = async ({ url: { origin }, params, fetch }) => {
-  fontData = fontData ?? (await fetch("/inter-latin-600-normal.ttf").then((res) => res.arrayBuffer()));
+  fontData = fontData ?? (await fetch("/HarmonyOS_Sans_SC_Medium.ttf").then((res) => res.arrayBuffer()));
 
   const path: string = params.path ?? "";
 
