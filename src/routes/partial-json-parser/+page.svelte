@@ -4,7 +4,7 @@
   import { OpenAI } from "openai";
   import { onMount } from "svelte";
 
-  const openai = new OpenAI({ apiKey: import.meta.env.OPENAI_API_KEY ?? "", baseURL: import.meta.env.OPENAI_API_BASE, dangerouslyAllowBrowser: true });
+  const openai = new OpenAI({ apiKey: import.meta.env.PUBLIC_OPENAI_API_KEY ?? "", baseURL: import.meta.env.PUBLIC_OPENAI_API_BASE, dangerouslyAllowBrowser: true });
 
   let running = false;
   let loading = true;
