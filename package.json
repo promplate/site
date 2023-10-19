@@ -11,7 +11,7 @@
     "lint": "eslint ."
   },
   "devDependencies": {
-    "@ethercorps/sveltekit-og": "2.0.2",
+    "@ethercorps/sveltekit-og": "2.0.1",
     "@iconify/json": "latest",
     "@julr/unocss-preset-heropatterns": "^1.0.2",
     "@sveltejs/adapter-vercel": "^3.0.3",
