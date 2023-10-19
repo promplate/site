@@ -19,6 +19,9 @@ export const GET: RequestHandler = async ({ url: { origin }, params, fetch }) =>
       context.title = post.title;
       context.subtitle = post.description;
     }
+  } else if (path === "partial-json-parser") {
+    context.title = "Partial JSON Parsing Demo";
+    context.subtitle = "Streaming LLM generated JSON";
   }
 
   const html = component.render(context).html.replaceAll("class=", "tw=");
