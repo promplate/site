@@ -32,7 +32,7 @@
       model: "gpt-3.5-turbo",
       messages: [
         { role: "system", content: "your answer should be a valid JSON string, with no code block. Just the JSON, without anything else." },
-        { role: "user", content: "I am learning JSON. Please give me a complex nested JSON example containing short strings, arrays, objects, NaN, Infinity, booleans, null, scientific notation floats and lots of emojis represented by unicode chars." },
+        { role: "user", content: "I am learning JSON. Please give me a complex nested JSON example containing short strings, arrays, objects, NaN, Infinity, booleans, null, scientific notation floats and a few emojis represented by unicode chars. Note that you should beautify your JSON response." },
       ],
       temperature: 1.1,
       stream: true,
@@ -56,7 +56,8 @@
 
   const show = (json_string: string) => {
     try {
-      return beautify(parse(json_string), reviver, 3, 35).replaceAll(String(nanPlaceholder), "NaN").replaceAll(String(infPlaceholder), "Infinity").replaceAll(String(_infPlaceholder), "-Infinity");
+      json_string = json_string.substring(json_string.indexOf("{"));
+      return beautify(parse(json_string), reviver, 3, 40).replaceAll(String(nanPlaceholder), "NaN").replaceAll(String(infPlaceholder), "Infinity").replaceAll(String(_infPlaceholder), "-Infinity");
     } catch (e) {
       return "";
     }
