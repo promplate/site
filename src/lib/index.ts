@@ -17,7 +17,7 @@ Translate the following dialog to \`ja_JP\`:
 
 chain = reply + translate
 
-chain.complete = ChatComplete(model="gpt-3.5-turbo")
+chain.complete = ChatComplete(model="gpt-3.5-turbo-1106")
 
 def main():
     """🚀 run the chain"""

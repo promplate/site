@@ -26,7 +26,7 @@ First, **Open a python REPL** 💻 (`ipython` or `jupyter` are OK. Just any REPL
 
 <CodeBlock code={`
 >>> from promplate.llm.openai import ChatComplete  # this simply wraps OpenAI's SDK
->>> complete = ChatComplete(model="gpt-3.5-turbo", api_key="...")
+>>> complete = ChatComplete(model="gpt-3.5-turbo-1106", api_key="...")
 `.trim()} />
 
 > The `api_key` should be filled with your API Key from [OpenAI Platform](https://platform.openai.com/account/api-keys)
@@ -42,7 +42,7 @@ Then call it simply with a string:
 You could use our FREE proxy site as <code>api_base</code> like this:
 <CodeBlock code={`
 >>> from promplate.llm.openai import ChatComplete
->>> complete = ChatComplete(model="gpt-3.5-turbo", api_base="https://promplate.dev")
+>>> complete = ChatComplete(model="gpt-3.5-turbo-1106", api_base="https://promplate.dev")
 >>> complete("hi")  # this simply wraps OpenAI's SDK
 'Hello! How can I assist you today?'
 `.trim()} />
@@ -67,7 +67,7 @@ And you can pass parameters when calling a <code>Complete</code> instance:
 It is still super easy, just use <code>ChatGenerate</code>:
 <CodeBlock code={`
 >>> from promplate.llm.openai import ChatGenerate
->>> generate = ChatGenerate(model="gpt-3.5-turbo", api_key="...")
+>>> generate = ChatGenerate(model="gpt-3.5-turbo-1106", api_key="...")
 >>> for i in generate("Explain why 1 + 1 = 2"):
 ...     print(i, end="", flush=True)  # this will print generated tokens gradually
 ...
