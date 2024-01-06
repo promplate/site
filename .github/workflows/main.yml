@@ -27,7 +27,10 @@ jobs:
 
       - name: Install Poetry
         run: curl -sSL https://install.python-poetry.org | python3 -
+      - name: Install Poetry
+        run: poetry install
         
 
       - name: Run isort with Poetry
     run: poetry run isort . --check --diff
+      if: success()
