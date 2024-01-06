@@ -11,8 +11,15 @@ jobs:
         uses: actions/setup-python@v4
         with:
           python-version: "3.11"
+      - name: Install Poetry
+        run: |
+          curl -sSL https://install.python-poetry.org | python -
       - name: Install dependencies
         run: |
+          import os
+          import sys
+          import subprocess
+          import requests
           pip install promplate[all] isort black
           yarn global add pyright
       - name: Run isort check
