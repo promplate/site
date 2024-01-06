@@ -19,7 +19,7 @@ jobs:
       - name: Install Poetry and set up Python
         uses: 'poetry/install-poetry@v1'
 - name: Install Poetry
-        run: |
+        run: |\n          poetry run
           poetry --version
           echo "$HOME/.poetry/bin" >> $GITHUB_PATH
           run: |
