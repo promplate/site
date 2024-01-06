@@ -20,12 +20,15 @@ jobs:
         with:
           python-version: 3.x
 
-      - name: Setup Poetry
-        uses: actions/setup-poetry@v1
+      - name: Install Poetry
+        uses: actions/install-poetry@v1
+      - name: Set up Python
+        uses: actions/setup-python@v2
         with:
-          poetry-version: '1.1.8'
-      - name: Run isort with Poetry
-        run: poetry run isort . --check --diff
+          python-version: 3.x
+      - name: Install Poetry
+        uses: actions/install-poetry@v1
+        run: ${{ env.PATH }}:/home/runner/.poetry/bin poetry run isort . --check --diff
 
       - name: Run isort with Poetry
         run: ~/.poetry/bin/poetry run isort . --check --diff
