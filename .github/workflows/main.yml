@@ -9,7 +9,9 @@ jobs:
   build:
     runs-on: ubuntu-latest
 
-    steps:
+    steps
+      - name: import poetry
+        run: poetry install:
       - name: Install Poetry using poetry/install-poetry
         uses: 'path-to-poetry/install-poetry@v2'
         with:
