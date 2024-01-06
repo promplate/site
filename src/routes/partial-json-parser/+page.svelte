@@ -87,5 +87,5 @@
       </div>
     </div>
   </div>
-  <button class="w-full rounded bg-white py-3 font-bold tracking-widest uppercase text-neutral-9 transition-all hover:bg-white/90" class:op-80={running} on:click={runDemo}>show another example</button>
+  <button class="w-full rounded bg-white py-3 text-neutral-9 font-bold tracking-widest uppercase transition-all hover:bg-white/90" class:op-80={running} on:click={runDemo}>show another example</button>
 </div>

@@ -9,6 +9,6 @@ export const load = (async ({ params }) => {
       meta: post.metadata,
     };
   } catch (e) {
-    throw error(404, JSON.stringify(e, null, 2));
+    error(404, JSON.stringify(e, null, 2));
   }
 }) satisfies PageLoad;

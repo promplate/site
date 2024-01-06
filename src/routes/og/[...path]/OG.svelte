@@ -14,8 +14,8 @@
 >
   <div class="flex flex-col justify-between">
     <div class="flex flex-col">
-      <h1 class="m-0 rounded-lg bg-neutral-800 px-6 py-4 text-12 font-bold tracking-wide capitalize text-neutral-200">{title ?? "promplate docs"}</h1>
-      <h2 class="mb-0 text-8 tracking-widest uppercase text-neutral-900/25">{subtitle ?? "the prompting framework"}</h2>
+      <h1 class="m-0 rounded-lg bg-neutral-800 px-6 py-4 text-12 text-neutral-200 font-bold tracking-wide capitalize">{title ?? "promplate docs"}</h1>
+      <h2 class="mb-0 text-8 text-neutral-900/25 tracking-widest uppercase">{subtitle ?? "the prompting framework"}</h2>
     </div>
     <a class="border-l-8 border-[#1e754fa8] pl-4 text-7 text-[#4d9375]" {href}>{href}</a>
   </div>
