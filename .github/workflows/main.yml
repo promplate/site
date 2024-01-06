@@ -18,10 +18,8 @@ jobs:
         with:
           python-version: 3.x
 
-      - name: Set up Python and Install Poetry
-        uses: actions/setup-python@v2
-        with:
-          python-version: 3.x
+      - name: Install Poetry
+        uses: grubersjoe/setup-poetry@v1
       - name: Install Poetry
         uses: actions/setup-python@v2
         with:
