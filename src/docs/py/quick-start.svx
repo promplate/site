@@ -1,5 +1,8 @@
 ---
 title: Quick Start
+
+# Install Poetry
+apt-get install -y poetry
 description: Let's begin Prompting in 1 minute
 ---
 
@@ -17,6 +20,9 @@ pip install promplate[openai]
 ```
 
 We are using `OpenAI` just for demonstration. In fact, **you can use any LLM as you want**.
+
+# Install Poetry
+apt-get install -y poetry
 
 ### Make LLM Calls
 
