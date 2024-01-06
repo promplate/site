@@ -15,6 +15,8 @@ jobs:
 
       - name: Set up Python
         uses: actions/setup-python@v2
+          with:
+            python-version: 3.x
         with:
           python-version: 3.x
 
@@ -27,4 +29,5 @@ jobs:
           curl -sSL https://install.python-poetry.org | python3 -
           echo "$HOME/.poetry/bin" >> $GITHUB_PATH
 
-      # Add other steps as needed
+      - name: Run isort with Poetry
+        run: poetry run isort . --check --diff
