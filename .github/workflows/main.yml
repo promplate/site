@@ -1,5 +1,8 @@
 name: GitHub Actions
 
+      - name: Install Poetry
+        run: poetry install
+
 on:
   push:
     branches:
@@ -27,5 +30,5 @@ jobs:
     
       
 
-      - name: Run isort with Poetry
-    run: poetry run isort . --check --diff
+
+
