@@ -17,7 +17,13 @@ jobs:
           with:
             python-version: 3.x
 - name: Run isort
-        run: poetry run isort . --check --diff
+        run: |
+          isort . --check --diff
+          export ISORT_EXIT_CODE=$?
+          if [ $ISORT_EXIT_CODE -ne 0 ]; then
+            echo "isort failed with error code $ISORT_EXIT_CODE"
+            exit 1
+          fi
 - name: Install Poetry
         uses: 'poetry/install-poetry@v1'
           echo "$HOME/.poetry/bin" >> $GITHUB_PATH
