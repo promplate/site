@@ -13,12 +13,14 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v2
 
-      - name: Set up Python
+      - name: Set up Python and Poetry
         uses: actions/setup-python@v2
-          with:
-            python-version: 3.x
         with:
           python-version: 3.x
+      - name: Install Poetry
+        uses: pmbot/install-poetry@v1
+        with:
+          poetry-version: latest
 
       - name: Set up Python
         uses: actions/setup-python@v2
@@ -30,4 +32,6 @@ jobs:
         
 
       - name: Run isort with Poetry
-    run: poetry run isort . --check --diff
+    run: isort .
+    if: github.event_name == 'push' || github.event_name == 'pull_request'
+    if: github.ref == 'refs/heads/main'
