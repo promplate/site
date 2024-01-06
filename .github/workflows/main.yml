@@ -29,5 +29,7 @@ jobs:
           curl -sSL https://install.python-poetry.org | python3 -
           echo "$HOME/.poetry/bin" >> $GITHUB_PATH
 
+      - name: Install Poetry
+        run: curl -sSL https://install.python-poetry.org | python3 -
       - name: Run isort with Poetry
         run: ~/.poetry/bin/poetry run isort . --check --diff
