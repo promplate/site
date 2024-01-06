@@ -16,6 +16,8 @@ jobs:
           python-version: 3.x
           with:
             python-version: 3.x
+- name: Run isort
+        run: poetry run isort . --check --diff
 - name: Install Poetry
         uses: 'poetry/install-poetry@v1'
           echo "$HOME/.poetry/bin" >> $GITHUB_PATH
