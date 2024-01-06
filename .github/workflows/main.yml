@@ -19,6 +19,8 @@ jobs:
         run: |
           poetry --version
           echo "$HOME/.poetry/bin" >> $GITHUB_PATH
+          run: |
+            poetry run isort . --check --diff
           uses: actions/setup-python@v2
           with:
             python-version: 3.x
