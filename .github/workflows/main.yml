@@ -20,8 +20,13 @@ jobs:
         with:
           python-version: 3.x
 
-      - name: Install Poetry
-    run: curl -sSL https://install.python-poetry.org | python3 -
+      - name: Install poetry
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.x
+          cache: 'pip'
+      - name: Run isort with Poetry
+        run: poetry run isort . --check --diff
         
 
       - name: Run isort with Poetry
