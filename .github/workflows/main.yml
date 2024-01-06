@@ -25,7 +25,12 @@ jobs:
         with:
           python-version: 3.x
 
-      - name: Install Poetry
+      - name: Set up Python and Poetry
+  uses: actions/setup-python@v2
+  with:
+    python-version: 3.x
+- name: Install Poetry
+  run: curl -sSL https://install.python-poetry.org | python3 -
         run: curl -sSL https://install.python-poetry.org | python3 -
       - name: Install Poetry
         run: poetry install
