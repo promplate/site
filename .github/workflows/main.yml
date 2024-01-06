@@ -25,4 +25,4 @@ jobs:
         
 
       - name: Run isort with Poetry
-        run: ~/.poetry/bin/poetry run isort . --check --diff
+    run: poetry run isort . --check --diff
