@@ -13,22 +13,22 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v2
 
-      - name: Set up Python
+      - name: Set up Python with Poetry
         uses: actions/setup-python@v2
           with:
             python-version: 3.x
-        with:
-          python-version: 3.x
+          actions/install-poetry@v1
 
       - name: Install Poetry
-        uses: actions/install-poetry@v1
+        run: pip install poetry
       - name: Set up Python
         uses: actions/setup-python@v2
         with:
           python-version: 3.x
       - name: Install Poetry
         uses: actions/install-poetry@v1
-        run: ${{ env.PATH }}:/home/runner/.poetry/bin poetry run isort . --check --diff
+        run: poetry install
+        run: poetry run isort . --check --diff
 
       - name: Run isort with Poetry
         run: ~/.poetry/bin/poetry run isort . --check --diff
