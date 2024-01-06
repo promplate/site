@@ -1,0 +1,4 @@
+promplate[all]
+isort
+black
+pyright
