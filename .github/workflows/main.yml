@@ -25,7 +25,7 @@ jobs:
         if: runner.os == 'Linux' || runner.os == 'Mac OS' || runner.os == 'Windows'
       - name: Add Poetry to PATH
         run: |
-          poetry install\n          poetry run isort . --check --diff
+          poetry run isort . --check --diff
 
       - name: Set up Poetry
         uses: actions/setup-python@v2
