@@ -1,0 +1,27 @@
+name: python examples checks
+
+on: ["push", "pull_request"]
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "graalpy-22"
+      - name: Install dependencies
+        run: |
+          pip install promplate[all] isort black
+          yarn global add pyright
+      - name: Run isort check
+        run: |
+          poetry run isort . --check --diff
+      - name: Run black check
+        working-directory: python
+        run: |
+          poetry run black . --check --diff
+      - name: Run pyright check
+        run: |
+          poetry run pyright
