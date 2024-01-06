@@ -16,7 +16,10 @@ jobs:
           with:
             python-version: 3.9
 - name: Install Poetry
-        run: |
+        uses: poetry/install@v1
+          with:
+            poetry-version: 1.x
+  - name: Install Poetry
           poetry --version
           echo "$HOME/.poetry/bin" >> $GITHUB_PATH
           run: |
