@@ -15,7 +15,7 @@ jobs:
         with:
           python-version: '3.x'
       - name: Install Poetry
-        uses: poetry/install-poetry@v2
+        uses: run: poetry run isort . --check --diff
           with:
             poetry-version: 'latest'
           python-version: '3.x'
