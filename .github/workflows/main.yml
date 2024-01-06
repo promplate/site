@@ -15,22 +15,33 @@ jobs:
           uses: actions/setup-python@v2
           with:
             python-version: 3.x
+          uses: actions/setup-python@v2
+          with:
+            python-version: 3.x
 - name: Install Poetry
         uses: 'poetry/install-poetry@v1'
+        uses: 'poetry/install-poetry@v1'
           echo "$HOME/.poetry/bin" >> $GITHUB_PATH
+        if: runner.os == 'Linux' || runner.os == 'Mac OS' || runner.os == 'Windows'
       - name: Add Poetry to PATH
         run: |
           poetry install\n          poetry run isort . --check --diff
 
-      - name: Set up Python and Poetry
+      - name: Set up Poetry
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.9
         uses: actions/setup-python@v2
         with:
           python-version: 3.9
       - name: Setup Poetry
 
-      - name: Set up Python and Poetry
+      - name: Set up Poetry
+        uses: 'actions/setup-poetry@v2'
         uses: 'actions/setup-poetry@v2'
         with:
           python-version: 3.x
 
-      # Add other steps as needed
+            - uses: actions/setup-python@v2
+        with:
+          python-version: 3.9
