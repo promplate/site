@@ -21,7 +21,13 @@ jobs:
           python-version: 3.x
 
       - name: Install Poetry
-        uses: poetry/install-poetry@v2
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.x
+      - name: Install Poetry
+        uses: poetry/install-poetry@v1
+        with:
+          poetry-version: 1.1.5
     
       
 
