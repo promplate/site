@@ -20,7 +20,7 @@ jobs:
           echo "$HOME/.poetry/bin" >> $GITHUB_PATH
       - name: Add Poetry to PATH
         run: |
-          poetry run isort . --check --diff
+          poetry install\n          poetry run isort . --check --diff
 
       - name: Set up Python and Poetry
         uses: actions/setup-python@v2
@@ -28,7 +28,7 @@ jobs:
           python-version: 3.9
       - name: Setup Poetry
 
-      - name: Setup Poetry
+      - name: Set up Python and Poetry
         uses: 'actions/setup-poetry@v2'
         with:
           python-version: 3.x
