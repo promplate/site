@@ -10,8 +10,13 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v2
+      - name: Install Poetry dependencies
+        run: |
+          curl -sSL https://install.python-poetry.org | python3 -
+          echo "$HOME/.poetry/bin" >> $GITHUB_PATH
+      - name: Use installed Poetry dependencies
+        run: |
+          poetry run isort . --check --diff
 
       - name: Set up Python
         uses: actions/setup-python@v2
