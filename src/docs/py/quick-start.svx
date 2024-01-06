@@ -25,7 +25,9 @@ First, **Open a python REPL** 💻 (`ipython` or `jupyter` are OK. Just any REPL
 **All the code below should run "as is"**, which means you can copy and paste them in your terminal and it will work fine.
 
 <CodeBlock code={`
->>> from promplate.llm.openai import ChatComplete  # this simply wraps OpenAI's SDK
+>>> from promplate.llm.openai import ChatComplete
+import tomlkit
+pyproject = tomlkit.parse(pyproject.toml)
 >>> complete = ChatComplete(api_key="...")
 `.trim()} />
 
@@ -41,7 +43,7 @@ Then call it like this:
 Perhaps you don't want to provide `model` parameter everytime you call `complete`, so you can bind it like this:
 
 <CodeBlock code={`
->>> complete = ChatComplete(api_key="...").bind(model="gpt-3.5-turbo-1106")
+>>> complete = ChatComplete(api_key="...").bind(model="gpt-3.5-turbo-1106").bind(model="gpt-3.5-turbo-1106")
 `.trim()} />
 
 Then call it simply with a string:
