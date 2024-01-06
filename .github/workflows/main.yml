@@ -1,0 +1,41 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run lint
+        run: npm run lint
+
+      - name: Build
+        run: npm run build
+
+      - name: Test
+        run: npm test
+```
+
+The updated file replaces the `npm lint` command with `npm run lint` in the "Run lint" step.
+
+Unit tests for the updated command:
+
+```javascript
+describe('Workflow Configuration', () => {
+  it('should use npm run lint command', () => {
+    const workflow = require('.github/workflows/main.yml');
+
+    const lintStep = workflow.jobs.build.steps.find(step => step.name === 'Run lint');
+    expect(lintStep.run).toBe('npm run lint');
+  });
+});
