@@ -26,24 +26,39 @@ First, **Open a python REPL** 💻 (`ipython` or `jupyter` are OK. Just any REPL
 
 <CodeBlock code={`
 >>> from promplate.llm.openai import ChatComplete  # this simply wraps OpenAI's SDK
->>> complete = ChatComplete(model="gpt-3.5-turbo-1106", api_key="...")
+>>> complete = ChatComplete(api_key="...")
 `.trim()} />
 
 > The `api_key` should be filled with your API Key from [OpenAI Platform](https://platform.openai.com/account/api-keys)
 
+Then call it like this:
+
+<CodeBlock code={`
+>>> complete("hi", model="gpt-3.5-turbo-1106")
+'Hello! How can I assist you today?'
+`.trim()} />
+
+Perhaps you don't want to provide `model` parameter everytime you call `complete`, so you can bind it like this:
+
+<CodeBlock code={`
+>>> complete = ChatComplete(api_key="...").bind(model="gpt-3.5-turbo-1106")
+`.trim()} />
+
 Then call it simply with a string:
 
 <CodeBlock code={`
->>> complete("hi")
+>>> complete("hi", model="gpt-3.5-turbo-1106")
 'Hello! How can I assist you today?'
 `.trim()} />
 
 <Details summary="If you don't have an OpenAI API Key 🔑">
-You could use our FREE proxy site as <code>api_base</code> like this:
+You could use our FREE proxy site as <code>base_url</code> like this:
 <CodeBlock code={`
 >>> from promplate.llm.openai import ChatComplete
->>> complete = ChatComplete(model="gpt-3.5-turbo-1106", api_base="https://promplate.dev")
->>> complete("hi")  # this simply wraps OpenAI's SDK
+>>> from httpx import Client  # or AsyncClient if use use AsyncChatComplete
+>>> client = Client(follow_redirects=True)  # this must be set because our free api uses 308 redirects
+>>> complete = ChatComplete(base_url="https://promplate.dev", api_key="<any-value>", http_client=client).bind(model="gpt-3.5-turbo-1106")
+>>> complete("hi")
 'Hello! How can I assist you today?'
 `.trim()} />
 </Details>
@@ -52,7 +67,7 @@ You could use our FREE proxy site as <code>api_base</code> like this:
 Simply replace <code>ChatComplete</code> by <code>TextComplete</code>:
 <CodeBlock code={`
 >>> from promplate.llm.openai import TextComplete
->>> complete = TextComplete(model="gpt-3.5-turbo-instruct", api_key="...")
+>>> complete = TextComplete(api_key="...").bind(model="gpt-3.5-turbo-instruct")
 >>> complete("I am")
 ' just incredibly proud of the team, and their creation of a brand new ship makes'
 `.trim()} />
@@ -67,7 +82,7 @@ And you can pass parameters when calling a <code>Complete</code> instance:
 It is still super easy, just use <code>ChatGenerate</code>:
 <CodeBlock code={`
 >>> from promplate.llm.openai import ChatGenerate
->>> generate = ChatGenerate(model="gpt-3.5-turbo-1106", api_key="...")
+>>> generate = ChatGenerate(api_key="...").bind(model="gpt-3.5-turbo-1106")
 >>> for i in generate("Explain why 1 + 1 = 2"):
 ...     print(i, end="", flush=True)  # this will print generated tokens gradually
 ...
@@ -100,6 +115,16 @@ You can run the prompt by `complete` we created before
 
 Wow, it works fine. In fact, you can use any python expression inside `{{ }}`.
 
+Tips: you can combine partial context to a template like this:
+
+<CodeBlock code={`
+>>> import time
+>>> from promplate import Template
+>>> greet = Template("Greet me. It is {{ time.asctime() }} now.", {"time": time})  # of course you can use locals() here too
+>>> greet.render()  # empty parameter is ok
+'Greet me. It is Sun Oct  1 03:56:02 2023 now.'
+`.trim()} />
+
 ### Turning a complex task into small pieces
 
 Sometimes we don't use a single prompt to complete. Here are some reasons:
@@ -111,52 +136,49 @@ Sometimes we don't use a single prompt to complete. Here are some reasons:
 - Breaking big tasks into sub tasks may enhance interpretability, reducing debugging time
 - ...
 
-In `prompate`, We use a `Node` to represent a single "task". You can initialize a `Task` with a string:
+In `prompate`, We use a `Node` to represent a single "task". You can initialize a `Task` with a string like initiating a `Template`:
 
 <CodeBlock code={`
 >>> from promplate import Node
->>> greet = Node("Greet me. It is {{ time.asctime() }} now.")
->>> greet.render(locals())
+>>> greet = Node("Greet me. It is {{ time.asctime() }} now.", locals())
+>>> greet.render()
 'Greet me. It is Sun Oct  1 04:16:04 2023 now.'
 `.trim()} />
 
-A `Node` acts like a `Template`, but **there are far more utilities**:
+But **there are far more utilities**.
 
-<CodeBlock code={`
->>> greet = Node("Greet me. It is {{ time.asctime() }} now.", locals())
->>> greet.render()  # you have passed the context during the node's initialization
-'Greet me. It is Sun Oct  1 04:16:54 2023 now.'
-`.trim()} />
-
-Magically, you can **add two nodes together**:
+Such as, you can **add two nodes together** magically:
 
 <CodeBlock code={`
 >>> translate = Node('translate """{{ __result__ }}""" into {{ target_language }}')
 >>> chain = greet + translate  # this represents the pipeline of "greeting in another language"
->>> chain.run({"target_language": "zh_CN"}, complete).result
+>>> chain.invoke({"target_language": "zh_CN"}, complete).result
 '早上好！'
 `.trim()} />
 
-Mention that the return type of `.run()` is `ChainContext` which combines the context passed everywhere in a right order.
-`__result__` is the output of last `Node`. It is automatically assigned during `.run()`. You can access it inside the template.
+<Details summary="Details">
+
+Mention that the return type of `.invoke()` is `ChainContext` which combines the context passed everywhere in a right order.
+`__result__` is the output of last `Node`. It is automatically assigned during `.invoke()`. You can access it inside the template.
 Outside the template, you can use `.result` of a `ChainContext` to get the last output.
 
 The following three expressions should return the same string:
 
 <CodeBlock code={`
 >>> template = Template("...")
->>> complete(template.render({}))
+>>> complete(template.render())
 `.trim()} />
 
 <CodeBlock code={`
->>> Node("...").run({})["__result__"]
+>>> Node("...").invoke()["__result__"]
 `.trim()} />
 
 <CodeBlock code={`
->>> Node("...").run({}).result
+>>> Node("...").invoke().result
 `.trim()} />
 
 This part may be a bit more complex, but believe me, this enhances the flexibility of this framework and you will like it.
+</Details>
 
 ### Registering callbacks
 
@@ -169,13 +191,15 @@ This part may be a bit more complex, but believe me, this enhances the flexibili
 
 In `promplate`, you can register a callback everytime before or after a node runs.
 
+Besides manually implementing the `Callback` interface, you can directly use decorators syntax like so:
+
 <CodeBlock code={`
->>> @greet.post_process
+>>> @greet.end_process
 ... def log_greet_result(context):
 ...     print(context.result)
 ...     print(context["target_language"])
 ...
->>> chain.run({"target_language": "zh_CN"}, complete).result
+>>> chain.invoke({"target_language": "zh_CN"}, complete).result
 Good morning!
 zh_CN
 '早上好！'
@@ -186,3 +210,4 @@ Congratulations 🎉 You've learnt the basic paradigm of using `promplate` for p
 ---
 
 Thanks for reading. There are still lots of features not mentioned here. Learn more in other pages 🤗
+If you have any questions, please feel free to ask us on [GitHub Discussions](https://github.com/promplate/core/discussions/categories/q-a).
