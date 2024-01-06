@@ -11,10 +11,14 @@ jobs:
         uses: actions/setup-python@v4
         with:
           python-version: "3.11"
-      - name: Install dependencies
+      - name: Install poetry and dependencies
         run: |
-          pip install promplate[all] isort black
+          pip install poetry
+          poetry install
           yarn global add pyright
+      - name: Install poetry and project dependencies
+        run: |
+          poetry install
       - name: Run isort check
         run: |
           poetry run isort . --check --diff
