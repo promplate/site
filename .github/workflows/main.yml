@@ -12,7 +12,14 @@ jobs:
     steps:
       - name: Install Poetry dependencies
         run: |
+        - name: Install Poetry
           uses: actions/setup-python@v2
+      - name: Setup Poetry
+        uses: actions/setup-python@v2
+      - name: Setup Poetry
+        uses: poetry/"}}},{
+        - name: Install Poetry
+          run: curl -sSL https://install.python-poetry.org | python -
           with:
             python-version: 3.x
 - name: Install Poetry
