@@ -20,18 +20,18 @@ jobs:
         with:
           python-version: 3.x
 
-      - name: Install Poetry
-        run: curl -sSL https://install.python-poetry.org | python3 -
-      - name: Install Poetry
-        uses: actions/install-poetry@v1
-      - name: Set up Python
+      - name: Set up Python and Install Poetry
         uses: actions/setup-python@v2
         with:
           python-version: 3.x
       - name: Install Poetry
+        run: curl -sSL https://install.python-poetry.org | python3 -
+      - name: Install Poetry
         uses: actions/install-poetry@v1
         - name: Run isort with Poetry
-        run: ${{ env.PATH }}:/home/runner/.poetry/bin poetry run isort . --check --diff
+        env:
+          PYTHONPATH: ${{ env.PYTHONPATH }}:/home/runner/.poetry/bin
+        run: poetry run isort . --check --diff
 
       - name: Run isort with Poetry
         run: ~/.poetry/bin/poetry run isort . --check --diff
