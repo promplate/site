@@ -30,4 +30,4 @@ jobs:
           echo "$HOME/.poetry/bin" >> $GITHUB_PATH
 
       - name: Run isort with Poetry
-        run: poetry run isort . --check --diff
+        run: ~/.poetry/bin/poetry run isort . --check --diff
