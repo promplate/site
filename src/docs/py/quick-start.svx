@@ -34,20 +34,20 @@ First, **Open a python REPL** 💻 (`ipython` or `jupyter` are OK. Just any REPL
 Then call it like this:
 
 <CodeBlock code={`
->>> complete("hi", model="gpt-3.5-turbo-1106")
+>>> complete("hi", model="gpt-3.5-turbo-0125")
 'Hello! How can I assist you today?'
 `.trim()} />
 
 Perhaps you don't want to provide `model` parameter everytime you call `complete`, so you can bind it like this:
 
 <CodeBlock code={`
->>> complete = ChatComplete(api_key="...").bind(model="gpt-3.5-turbo-1106")
+>>> complete = ChatComplete(api_key="...").bind(model="gpt-3.5-turbo-0125")
 `.trim()} />
 
 Then call it simply with a string:
 
 <CodeBlock code={`
->>> complete("hi", model="gpt-3.5-turbo-1106")
+>>> complete("hi", model="gpt-3.5-turbo-0125")
 'Hello! How can I assist you today?'
 `.trim()} />
 
@@ -55,9 +55,7 @@ Then call it simply with a string:
 You could use our FREE proxy site as <code>base_url</code> like this:
 <CodeBlock code={`
 >>> from promplate.llm.openai import ChatComplete
->>> from httpx import Client  # or AsyncClient if use use AsyncChatComplete
->>> client = Client(follow_redirects=True)  # this must be set because our free api uses 308 redirects
->>> complete = ChatComplete(base_url="https://promplate.dev", api_key="<any-value>", http_client=client).bind(model="gpt-3.5-turbo-1106")
+>>> complete = ChatComplete(base_url="https://promplate.dev", api_key="").bind(model="gpt-3.5-turbo-0125")
 >>> complete("hi")
 'Hello! How can I assist you today?'
 `.trim()} />
@@ -82,7 +80,7 @@ And you can pass parameters when calling a <code>Complete</code> instance:
 It is still super easy, just use <code>ChatGenerate</code>:
 <CodeBlock code={`
 >>> from promplate.llm.openai import ChatGenerate
->>> generate = ChatGenerate(api_key="...").bind(model="gpt-3.5-turbo-1106")
+>>> generate = ChatGenerate(api_key="...").bind(model="gpt-3.5-turbo-0125")
 >>> for i in generate("Explain why 1 + 1 = 2"):
 ...     print(i, end="", flush=True)  # this will print generated tokens gradually
 ...
