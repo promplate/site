@@ -41,6 +41,7 @@
   "dependencies": {
     "@vercel/analytics": "^1.1.1",
     "json-beautify": "^1.1.1",
+    "langchainhub": "^0.0.6",
     "openai": "^4.24.1",
     "partial-json": "0.1.3"
   }
