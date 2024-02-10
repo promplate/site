@@ -13,7 +13,7 @@ jobs:
           python-version: "3.11"
       - name: Install dependencies
         run: |
-          pip install promplate[all] isort black
+          pip install promplate[all] promplate-pyodide isort black pyodide-py
           yarn global add pyright
       - name: Run isort check
         run: |

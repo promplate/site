@@ -1,0 +1,91 @@
+<script lang="ts">
+  import ConsolePrompt from "$lib/components/ConsolePrompt.svelte";
+  import { initConsole } from "$lib/pyodide/console";
+  import type { PyAwaitable, PyProxy, PythonError } from "pyodide/ffi";
+  import { onMount } from "svelte";
+
+  type Item = { type: "out" | "err" | "in" | "repr"; text: string; incomplete?: boolean };
+
+  type Status = "incomplete" | "syntax-error" | "complete";
+
+  let loading = false;
+
+  let log: Item[] = [];
+
+  function joinLog(log: Item[]) {
+    let res: Item[] = [];
+    log.forEach(({ type, text, incomplete }) => {
+      const last = res.at(-1);
+
+      if (last && last.type === type && last.text.at(-1) === "\n" && last.text.at(-2) !== "\n" && text === "\n") {
+        last.text += text;
+        res = [...res.slice(0, -1), last];
+      } else if (text) {
+        res.push({ type, text, incomplete });
+      }
+    });
+    return res;
+  }
+
+  let input = "";
+
+  let pyConsole: PyProxy;
+
+  let status: Status = "complete";
+
+  onMount(async () => {
+    pyConsole = await initConsole();
+
+    pyConsole.stdout_callback = (str: string) => {
+      log = [...log, { type: "out", text: str.trim() ? str.trimEnd() : "" }];
+    };
+
+    pyConsole.stderr_callback = (str: string) => {
+      log = [...log, { type: "err", text: str.trim() ? str.trimEnd() : "" }];
+    };
+  });
+
+  async function afterPush(future: PyAwaitable & { syntax_check: Status; formatted_error: string }) {
+    status = future.syntax_check;
+    if (status === "syntax-error") {
+      console.log(future.formatted_error);
+      log = [...log, { type: "err", text: future.formatted_error.trim() }];
+    } else if (status === "complete") {
+      loading = true;
+      try {
+        const result = await future;
+        log = [...log, { type: "repr", text: result?.toString() ?? "" }];
+        pyConsole.globals.set("_", result);
+      } catch (e) {
+        log = [...log, { type: "err", text: (e as PythonError).message }];
+      } finally {
+        loading = false;
+      }
+    }
+  }
+
+  function handleInput() {
+    const future = pyConsole.push(input);
+    log = [...log, { type: "in", text: `${input}`, incomplete: status === "incomplete" }];
+    afterPush(future);
+    input = "";
+  }
+</script>
+
+<div class="my-8 w-[calc(100vw-4rem)] flex flex-col gap-0.5 overflow-x-scroll whitespace-pre-wrap rounded bg-white/5 p-5 font-mono <lg:(my-6 w-[calc(100vw-3rem)] p-4 text-sm) <sm:(my-4 w-[calc(100vw-2rem)] p-3 text-xs) [&>div:hover]:(rounded bg-white/5 px-1 py-0.5 -mx-1 -my-0.5)">
+  {#each joinLog(log) as { type, text, incomplete }}
+    {#if type === "out"}
+      <div class="text-yellow-2">{text}</div>
+    {:else if type === "in"}
+      <div><ConsolePrompt prompt={incomplete ? "..." : ">>>"} />{text}</div>
+    {:else if type === "err"}
+      <div class="text-red-4">{text}</div>
+    {:else if type === "repr"}
+      <div class="text-cyan-2">{text}</div>
+    {/if}
+  {/each}
+  <div class="flex flex-row items-center" class:animate-pulse={loading}>
+    <ConsolePrompt prompt={status === "incomplete" ? "..." : ">>>"} />
+    <input class="w-full rounded bg-transparent outline-none" bind:value={input} type="text" on:keypress={(event) => event.key === "Enter" && handleInput()} />
+  </div>
+</div>

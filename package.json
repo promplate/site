@@ -8,7 +8,8 @@
     "preview": "vite preview",
     "check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
     "check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
-    "lint": "eslint ."
+    "lint": "eslint src",
+    "postinstall": "node src/copy-assets.mjs"
   },
   "devDependencies": {
     "@ethercorps/sveltekit-og": "3.0.0",
@@ -43,6 +44,7 @@
     "json-beautify": "^1.1.1",
     "langchainhub": "^0.0.6",
     "openai": "^4.26.1",
-    "partial-json": "0.1.4"
+    "partial-json": "0.1.4",
+    "pyodide": "^0.25.0"
   }
 }
