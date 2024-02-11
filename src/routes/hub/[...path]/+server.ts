@@ -3,7 +3,7 @@ import { text } from "@sveltejs/kit";
 
 interface Message {
   id: string[];
-  kwargs: { prompt: { kwargs: { template: string; input_variables: string[] } } };
+  kwargs: { content?: string; prompt?: { kwargs: { template: string; input_variables: string[] } } };
 }
 
 interface Prompt {
@@ -11,21 +11,19 @@ interface Prompt {
   kwargs: { messages: Message[] };
 }
 
-type PromptTemplate = "SystemMessagePromptTemplate" | "HumanMessagePromptTemplate" | "AIMessagePromptTemplate";
-
-function parseRole(type: PromptTemplate) {
-  switch (type) {
-    case "AIMessagePromptTemplate":
+function parseRole(type: string) {
+  switch (type.at(0)) {
+    case "A":
       return "assistant";
-    case "HumanMessagePromptTemplate":
+    case "H":
       return "user";
-    case "SystemMessagePromptTemplate":
+    case "S":
       return "system";
   }
 }
 
 function translatePrompt(template: string, input_variables: string[]) {
-  let text = template;
+  let text = template.replaceAll("{{", "{").replaceAll("}}", "}");
   for (const name of input_variables) {
     text = text.replaceAll(`{${name}}`, `{{ ${name} }}`);
   }
@@ -37,16 +35,14 @@ export async function GET({ params }) {
   try {
     const data = JSON.parse(await pull(path)) as Prompt;
 
-    const messages = data.kwargs.messages.map(
-      ({
-        id,
-        kwargs: {
-          prompt: {
-            kwargs: { template, input_variables },
-          },
-        },
-      }) => ({ role: parseRole(id.at(-1) as PromptTemplate), content: translatePrompt(template, input_variables) })
-    );
+    const messages = data.kwargs.messages.map(({ id, kwargs: { prompt, content } }) => {
+      if (content) return { role: parseRole(id.at(-1) as string), content: content.replaceAll("{{", "{").replaceAll("}}", "}") };
+
+      const {
+        kwargs: { template, input_variables },
+      } = prompt!;
+      return { role: parseRole(id.at(-1) as string), content: translatePrompt(template, input_variables) };
+    });
     const template = messages.map(({ role, content }) => `<|${role}|>\n${content}`).join("\n");
     return text(template, { headers: { "content-type": "text/plain; charset=utf-8" } });
   } catch (e) {
