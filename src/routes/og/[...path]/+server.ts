@@ -24,6 +24,9 @@ export const GET: RequestHandler = async ({ url: { origin }, params, fetch }) =>
   } else if (path === "partial-json-parser") {
     context.title = "Partial JSON Parsing Demo";
     context.subtitle = "Streaming LLM generated JSON";
+  } else if (path === "playground") {
+    context.title = "Promplate Playground";
+    context.subtitle = "Interactive Python Terminal";
   }
 
   const html = cast<SvelteComponent>(component).render(context).html.replaceAll("class=", "tw=");
