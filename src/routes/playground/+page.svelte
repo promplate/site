@@ -3,14 +3,18 @@
   import { initConsole } from "$lib/pyodide/console";
   import type { PyAwaitable, PyProxy, PythonError } from "pyodide/ffi";
   import { onMount } from "svelte";
+  import type { KeyboardEventHandler } from "svelte/elements";
 
   type Item = { type: "out" | "err" | "in" | "repr"; text: string; incomplete?: boolean };
 
   type Status = "incomplete" | "syntax-error" | "complete";
 
-  let loading = false;
+  let loading = true;
 
   let log: Item[] = [];
+
+  let history: string[] = [];
+  let index = -1;
 
   function joinLog(log: Item[]) {
     let res: Item[] = [];
@@ -28,12 +32,16 @@
   }
 
   let input = "";
+  let inputRef: HTMLInputElement;
 
   let pyConsole: PyProxy;
 
   let status: Status = "complete";
 
   onMount(async () => {
+    history.unshift(...JSON.parse(localStorage.getItem("console-history") || "[]"));
+    inputRef.focus();
+
     pyConsole = await initConsole();
 
     pyConsole.stdout_callback = (str: string) => {
@@ -43,13 +51,15 @@
     pyConsole.stderr_callback = (str: string) => {
       log = [...log, { type: "err", text: str.trim() ? str.trimEnd() : "" }];
     };
+
+    loading = false;
   });
 
   async function afterPush(future: PyAwaitable & { syntax_check: Status; formatted_error: string }) {
     status = future.syntax_check;
     if (status === "syntax-error") {
       console.log(future.formatted_error);
-      log = [...log, { type: "err", text: future.formatted_error.trim() }];
+      log = [...log, { type: "err", text: `Traceback (most recent call last):\n${future.formatted_error}` }];
     } else if (status === "complete") {
       loading = true;
       try {
@@ -66,10 +76,64 @@
 
   function handleInput() {
     const future = pyConsole.push(input);
+    if (input.trim() && input !== history[0]) {
+      history.unshift(input);
+      localStorage.setItem("console-history", JSON.stringify(history));
+    }
     log = [...log, { type: "in", text: `${input}`, incomplete: status === "incomplete" }];
     afterPush(future);
     input = "";
   }
+
+  function setCusorToEnd() {
+    requestAnimationFrame(() => inputRef.setSelectionRange(input.length, input.length));
+  }
+
+  const onKeyDown: KeyboardEventHandler<HTMLInputElement> = (event) => {
+    switch (event.key) {
+      case "ArrowUp": {
+        const text = history.at(++index);
+        if (text) {
+          input = text;
+          setCusorToEnd();
+        } else {
+          index = history.length;
+        }
+        break;
+      }
+
+      case "ArrowDown": {
+        index--;
+        if (index <= -1) {
+          input = "";
+          index = -1;
+          break;
+        }
+        input = history.at(index)!;
+        setCusorToEnd();
+        break;
+      }
+
+      case "Tab": {
+        event.preventDefault();
+        if (!input.trim()) {
+          input += " ".repeat(4);
+        }
+        index = -1;
+        break;
+      }
+
+      case "Enter": {
+        handleInput();
+        index = -1;
+        break;
+      }
+
+      default: {
+        index = -1;
+      }
+    }
+  };
 </script>
 
 <div class="my-8 w-[calc(100vw-4rem)] flex flex-col gap-0.5 overflow-x-scroll whitespace-pre-wrap rounded bg-white/5 p-5 font-mono <lg:(my-6 w-[calc(100vw-3rem)] p-4 text-sm) <sm:(my-4 w-[calc(100vw-2rem)] p-3 text-xs) [&>div:hover]:(rounded bg-white/5 px-1 py-0.5 -mx-1 -my-0.5)">
@@ -86,6 +150,6 @@
   {/each}
   <div class="flex flex-row items-center" class:animate-pulse={loading}>
     <ConsolePrompt prompt={status === "incomplete" ? "..." : ">>>"} />
-    <input class="w-full rounded bg-transparent outline-none" bind:value={input} type="text" on:keypress={(event) => event.key === "Enter" && handleInput()} />
+    <input bind:this={inputRef} class="w-full rounded bg-transparent outline-none" bind:value={input} type="text" on:keydown={onKeyDown} />
   </div>
 </div>
