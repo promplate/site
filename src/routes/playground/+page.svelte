@@ -59,12 +59,19 @@
     };
 
     loading = false;
+
+    await push("from promplate import *");
+    await push("from promplate.llm.openai import *");
+    await push("# now all exposed APIs of promplate are available");
   });
 
-  async function afterPush(future: PyAwaitable & { syntax_check: Status; formatted_error: string }) {
+  async function push(source: string) {
+    const future: PyAwaitable & { syntax_check: Status; formatted_error: string } = pyConsole.push(source);
+
+    log = [...log, { type: "in", text: source, incomplete: status === "incomplete" }];
+
     status = future.syntax_check;
     if (status === "syntax-error") {
-      console.log(future.formatted_error);
       log = [...log, { type: "err", text: `Traceback (most recent call last):\n${future.formatted_error}` }];
     } else if (status === "complete") {
       loading = true;
@@ -81,13 +88,11 @@
   }
 
   function handleInput() {
-    const future = pyConsole.push(input);
+    push(input);
     if (input.trim() && input !== history[0]) {
       history.unshift(input);
       localStorage.setItem("console-history", JSON.stringify(history));
     }
-    log = [...log, { type: "in", text: `${input}`, incomplete: status === "incomplete" }];
-    afterPush(future);
     input = "";
   }
 

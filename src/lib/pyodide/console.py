@@ -12,6 +12,3 @@ def complete(source: str):
 
 
 console = PyodideConsole()
-
-console.push("from promplate import *")
-console.push("from promplate.llm.openai import *")
