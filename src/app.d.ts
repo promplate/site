@@ -1,8 +1,6 @@
-import type { Highlighter } from "shikiji";
-
 declare global {
   interface Window {
-    cache: Record<string, Highlighter>;
+    cache: Map<string, unknown>;
   }
 
   namespace App {
@@ -13,4 +11,4 @@ declare global {
   }
 }
 
-export {};
+export { };
