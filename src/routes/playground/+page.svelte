@@ -1,6 +1,6 @@
 <script lang="ts">
   import ConsolePrompt from "$lib/components/ConsolePrompt.svelte";
-  import { initConsole, type GetWrapped } from "$lib/pyodide/console";
+  import { getPy, initConsole } from "$lib/pyodide";
   import type { PyAwaitable, PyProxy, PythonError } from "pyodide/ffi";
   import { onMount } from "svelte";
   import type { KeyboardEventHandler } from "svelte/elements";
@@ -35,7 +35,8 @@
   let inputRef: HTMLInputElement;
 
   let pyConsole: PyProxy;
-  let getWrapped: GetWrapped;
+  let getWrapped: (future: PyAwaitable) => Promise<[unknown, string]>;
+  let complete: (source: string) => [string[], number];
 
   let status: Status = "complete";
 
@@ -43,9 +44,11 @@
     history.unshift(...JSON.parse(localStorage.getItem("console-history") || "[]"));
     inputRef.focus();
 
-    const utilities = await initConsole();
-    pyConsole = utilities.pyConsole;
-    getWrapped = utilities.getWrapped;
+    const py = await getPy();
+    await initConsole();
+    pyConsole = py.globals.get("console");
+    getWrapped = py.globals.get("get_wrapped");
+    complete = py.globals.get("complete");
 
     pyConsole.stdout_callback = (str: string) => {
       log = [...log, { type: "out", text: str.trim() ? str.trimEnd() : "" }];
@@ -121,6 +124,12 @@
         event.preventDefault();
         if (!input.trim()) {
           input += " ".repeat(4);
+        } else {
+          const [results, position] = complete(input);
+          if (results.length === 1) {
+            input = input.slice(0, position) + results[0];
+            setCusorToEnd();
+          }
         }
         index = -1;
         break;

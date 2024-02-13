@@ -1,5 +1,6 @@
 import { loadPyodide, type PyodideInterface } from "pyodide";
 import initCode from "./init.py?raw";
+import initConsoleCode from "./console.py?raw"
 import { AsyncClient } from "./translate";
 import { version } from "pyodide/package.json";
 import * as env from "$env/static/public";
@@ -19,4 +20,9 @@ export async function getPy() {
   py.registerJsModule("openai", { AsyncClient, Client: null, version: await import("openai/version"), __all__: [] });
   await py.runPythonAsync(initCode);
   return py;
+}
+
+export async function initConsole() {
+  const py = await getPy()
+  await py.runPythonAsync(initConsoleCode);
 }
