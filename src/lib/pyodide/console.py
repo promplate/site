@@ -1,4 +1,11 @@
-from pyodide.console import PyodideConsole
+from pyodide.console import ConsoleFuture, PyodideConsole
+from pyodide.ffi import to_js
+
+
+async def get_wrapped(future: ConsoleFuture):
+    res = await future
+    return to_js([res, None if res is None else repr(res)], depth=1)
+
 
 console = PyodideConsole()
 

@@ -1,6 +1,6 @@
 <script lang="ts">
   import ConsolePrompt from "$lib/components/ConsolePrompt.svelte";
-  import { initConsole } from "$lib/pyodide/console";
+  import { initConsole, type GetWrapped } from "$lib/pyodide/console";
   import type { PyAwaitable, PyProxy, PythonError } from "pyodide/ffi";
   import { onMount } from "svelte";
   import type { KeyboardEventHandler } from "svelte/elements";
@@ -35,6 +35,7 @@
   let inputRef: HTMLInputElement;
 
   let pyConsole: PyProxy;
+  let getWrapped: GetWrapped;
 
   let status: Status = "complete";
 
@@ -42,7 +43,9 @@
     history.unshift(...JSON.parse(localStorage.getItem("console-history") || "[]"));
     inputRef.focus();
 
-    pyConsole = await initConsole();
+    const utilities = await initConsole();
+    pyConsole = utilities.pyConsole;
+    getWrapped = utilities.getWrapped;
 
     pyConsole.stdout_callback = (str: string) => {
       log = [...log, { type: "out", text: str.trim() ? str.trimEnd() : "" }];
@@ -63,8 +66,8 @@
     } else if (status === "complete") {
       loading = true;
       try {
-        const result = await future;
-        log = [...log, { type: "repr", text: result?.toString() ?? "" }];
+        const [result, repr] = await getWrapped(future);
+        log = [...log, { type: "repr", text: repr ?? "" }];
         pyConsole.globals.set("_", result);
       } catch (e) {
         log = [...log, { type: "err", text: (e as PythonError).message }];
