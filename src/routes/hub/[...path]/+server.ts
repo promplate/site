@@ -1,5 +1,5 @@
-import { pull } from "$lib/hub";
 import { text } from "@sveltejs/kit";
+import { pull } from "$lib/hub";
 
 interface Message {
   id: string[];
@@ -24,9 +24,9 @@ function parseRole(type: string) {
 
 function translatePrompt(template: string, input_variables: string[]) {
   let text = template.replaceAll("{{", "{").replaceAll("}}", "}");
-  for (const name of input_variables) {
+  for (const name of input_variables)
     text = text.replaceAll(`{${name}}`, `{{ ${name} }}`);
-  }
+
   return text;
 }
 
@@ -36,7 +36,8 @@ export async function GET({ params }) {
     const data = JSON.parse(await pull(path)) as Prompt;
 
     const messages = data.kwargs.messages.map(({ id, kwargs: { prompt, content } }) => {
-      if (content) return { role: parseRole(id.at(-1) as string), content: content.replaceAll("{{", "{").replaceAll("}}", "}") };
+      if (content)
+        return { role: parseRole(id.at(-1) as string), content: content.replaceAll("{{", "{").replaceAll("}}", "}") };
 
       const {
         kwargs: { template, input_variables },
@@ -45,7 +46,8 @@ export async function GET({ params }) {
     });
     const template = messages.map(({ role, content }) => `<|${role}|>\n${content}`).join("\n");
     return text(template, { headers: { "content-type": "text/plain; charset=utf-8" } });
-  } catch (e) {
+  }
+  catch (e) {
     console.error(e);
     return text("", { status: 404 });
   }

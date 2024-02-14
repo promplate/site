@@ -1,5 +1,6 @@
-import { json } from "@sveltejs/kit";
 import type { Post } from "$lib/types";
+
+import { json } from "@sveltejs/kit";
 
 const paths = import.meta.glob("/src/docs/*/*.svx", { eager: true });
 

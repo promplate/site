@@ -1,5 +1,6 @@
 {
   "name": "promplate-docs",
+  "type": "module",
   "version": "0.0.1",
   "private": true,
   "scripts": {
@@ -8,10 +9,20 @@
     "preview": "vite preview",
     "check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
     "check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
-    "lint": "eslint src",
-    "postinstall": "node src/copy-assets.mjs"
+    "lint": "eslint .",
+    "postinstall": "node src/copy-assets.js"
+  },
+  "dependencies": {
+    "@vercel/analytics": "^1.1.3",
+    "@vercel/speed-insights": "^1.0.9",
+    "json-beautify": "^1.1.1",
+    "langchainhub": "^0.0.8",
+    "openai": "^4.28.0",
+    "partial-json": "^0.1.6",
+    "pyodide": "^0.25.0"
   },
   "devDependencies": {
+    "@antfu/eslint-config": "^2.6.4",
     "@ethercorps/sveltekit-og": "3.0.0",
     "@iconify/json": "latest",
     "@julr/unocss-preset-heropatterns": "^1.0.2",
@@ -24,6 +35,7 @@
     "@unocss/extractor-svelte": "^0.58.5",
     "@unocss/reset": "^0.58.5",
     "eslint": "^8.56.0",
+    "eslint-plugin-format": "^0.1.0",
     "eslint-plugin-svelte": "^2.35.1",
     "mdsvex": "^0.11.0",
     "rehype-autolink-headings": "^7.1.0",
@@ -37,15 +49,5 @@
     "typescript": "^5.3.3",
     "unocss": "^0.58.5",
     "vite": "^5.1.1"
-  },
-  "type": "module",
-  "dependencies": {
-    "@vercel/analytics": "^1.1.3",
-    "@vercel/speed-insights": "^1.0.9",
-    "json-beautify": "^1.1.1",
-    "langchainhub": "^0.0.8",
-    "openai": "^4.27.1",
-    "partial-json": "^0.1.6",
-    "pyodide": "^0.25.0"
   }
 }

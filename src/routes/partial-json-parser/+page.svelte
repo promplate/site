@@ -1,29 +1,34 @@
 <script lang="ts">
-  import CodeBlock from "$lib/components/CodeBlock.svelte";
-  import { parse } from "partial-json";
-  import { OpenAI } from "openai";
-  import { onMount } from "svelte";
   import * as env from "$env/static/public";
+  import CodeBlock from "$lib/components/CodeBlock.svelte";
   import beautify from "json-beautify";
+  import { OpenAI } from "openai";
+  import { parse } from "partial-json";
+  import { onMount } from "svelte";
 
   const openai = new OpenAI({ apiKey: env.PUBLIC_OPENAI_API_KEY ?? "", baseURL: env.PUBLIC_OPENAI_API_BASE, dangerouslyAllowBrowser: true });
 
   let running = false;
   let loading = true;
+  let json_string = "";
 
   const nanPlaceholder = Math.random();
   const infPlaceholder = Math.random();
   const _infPlaceholder = Math.random();
 
   function reviver(_: string, value: unknown) {
-    if (value === Infinity) return infPlaceholder;
-    if (value === -Infinity) return _infPlaceholder;
-    if (Number.isNaN(value)) return nanPlaceholder;
+    if (value === Number.POSITIVE_INFINITY)
+      return infPlaceholder;
+    if (value === Number.NEGATIVE_INFINITY)
+      return _infPlaceholder;
+    if (Number.isNaN(value))
+      return nanPlaceholder;
     return value;
   }
 
   async function runDemo() {
-    if (running) return;
+    if (running)
+      return;
 
     running = true;
     loading = true;
@@ -44,21 +49,22 @@
     try {
       for await (const chunk of res) {
         const delta = chunk.choices[0].delta.content ?? "";
-        if (delta) json_string += delta;
+        if (delta)
+          json_string += delta;
       }
-    } catch (e) {
+    }
+    catch (e) {
       json_string = String(e);
     }
     running = false;
   }
 
-  let json_string = "";
-
   const show = (json_string: string) => {
     try {
       json_string = json_string.substring(json_string.indexOf("{"));
       return beautify(parse(json_string), reviver, 3, 40).replaceAll(String(nanPlaceholder), "NaN").replaceAll(String(infPlaceholder), "Infinity").replaceAll(String(_infPlaceholder), "-Infinity");
-    } catch (e) {
+    }
+    catch (e) {
       return "";
     }
   };

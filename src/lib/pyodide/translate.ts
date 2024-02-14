@@ -1,6 +1,7 @@
-import { OpenAI, type ClientOptions } from "openai";
-import * as Core from "openai/core";
+import type * as Core from "openai/core";
 import type { PyProxy } from "pyodide/ffi";
+
+import { type ClientOptions, OpenAI } from "openai";
 
 interface PyClientOptions {
   api_key?: string;

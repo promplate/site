@@ -1,4 +1,5 @@
 import type { PageLoad } from "./$types";
+
 import { error } from "@sveltejs/kit";
 
 export const load = (async ({ params }) => {
@@ -8,7 +9,8 @@ export const load = (async ({ params }) => {
       content: post.default,
       meta: post.metadata,
     };
-  } catch (e) {
+  }
+  catch (e) {
     error(404, JSON.stringify(e, null, 2));
   }
 }) satisfies PageLoad;

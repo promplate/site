@@ -1,16 +1,15 @@
-import { loadPyodide, type PyodideInterface } from "pyodide";
+import initConsoleCode from "./console.py?raw";
 import initCode from "./init.py?raw";
-import initConsoleCode from "./console.py?raw"
 import { AsyncClient } from "./translate";
-import { version } from "pyodide/package.json";
 import * as env from "$env/static/public";
+import { type PyodideInterface, loadPyodide } from "pyodide";
+import { version } from "pyodide/package.json";
 
 let py: PyodideInterface;
 
 export async function getPy() {
-  if (typeof py !== "undefined") {
+  if (typeof py !== "undefined")
     return py;
-  }
 
   // const indexURL = typeof window === "undefined" ? undefined : (process.env.NODE_ENV === "production" && env.PUBLIC_PYODIDE_INDEX_URL) || "/pyodide/";
   const indexURL = `https://cdn.jsdelivr.net/pyodide/v${version}/full/`;
@@ -23,6 +22,6 @@ export async function getPy() {
 }
 
 export async function initConsole() {
-  const py = await getPy()
+  const py = await getPy();
   await py.runPythonAsync(initConsoleCode);
 }

@@ -1,9 +1,10 @@
 <script lang="ts">
+  import type { PyAwaitable, PyProxy, PythonError } from "pyodide/ffi";
+  import type { KeyboardEventHandler } from "svelte/elements";
+
   import ConsolePrompt from "$lib/components/ConsolePrompt.svelte";
   import { getPy, initConsole } from "$lib/pyodide";
-  import type { PyAwaitable, PyProxy, PythonError } from "pyodide/ffi";
   import { onMount } from "svelte";
-  import type { KeyboardEventHandler } from "svelte/elements";
 
   type Item = { type: "out" | "err" | "in" | "repr"; text: string; incomplete?: boolean };
 
@@ -13,7 +14,7 @@
 
   let log: Item[] = [];
 
-  let history: string[] = [];
+  const history: string[] = [];
   let index = -1;
 
   function joinLog(log: Item[]) {
@@ -24,7 +25,8 @@
       if (last && last.type === type && last.text.at(-1) === "\n" && last.text.at(-2) !== "\n" && text === "\n") {
         last.text += text;
         res = [...res.slice(0, -1), last];
-      } else if (text) {
+      }
+      else if (text) {
         res.push({ type, text, incomplete });
       }
     });
@@ -73,15 +75,18 @@
     status = future.syntax_check;
     if (status === "syntax-error") {
       log = [...log, { type: "err", text: `Traceback (most recent call last):\n${future.formatted_error}` }];
-    } else if (status === "complete") {
+    }
+    else if (status === "complete") {
       loading = true;
       try {
         const [result, repr] = await getWrapped(future);
         log = [...log, { type: "repr", text: repr ?? "" }];
         pyConsole.globals.set("_", result);
-      } catch (e) {
+      }
+      catch (e) {
         log = [...log, { type: "err", text: (e as PythonError).message }];
-      } finally {
+      }
+      finally {
         loading = false;
       }
     }
@@ -107,7 +112,8 @@
         if (text) {
           input = text;
           setCusorToEnd();
-        } else {
+        }
+        else {
           index = history.length;
         }
         break;
@@ -129,7 +135,8 @@
         event.preventDefault();
         if (!input.trim()) {
           input += " ".repeat(4);
-        } else {
+        }
+        else {
           const [results, position] = complete(input);
           if (results.length === 1) {
             input = input.slice(0, position) + results[0];

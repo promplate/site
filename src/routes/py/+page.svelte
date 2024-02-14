@@ -1,6 +1,6 @@
 <script>
-  import CodeBlock from "$lib/components/CodeBlock.svelte";
   import { examplePythonOutput, examplePythonScript } from "$lib";
+  import CodeBlock from "$lib/components/CodeBlock.svelte";
   import { onMount } from "svelte";
 
   let forceShowArrow = true;

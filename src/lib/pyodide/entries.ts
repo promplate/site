@@ -1,14 +1,14 @@
-import type { PyCallable, PyProxy } from "pyodide/ffi";
-import { getPy } from "./init";
-
 import type { ClientOptions } from "openai";
-import { toPyOptions, toJs } from "./translate";
 import type { ChatCompletionCreateParams, CompletionCreateParams } from "openai/src/resources/index.js";
+import type { PyCallable, PyProxy } from "pyodide/ffi";
+
+import { getPy } from "./init";
+import { toJs, toPyOptions } from "./translate";
 
 export type ChatCompletionParams = Omit<ChatCompletionCreateParams, "messages" | "stream">;
 export type TextCompletionParams = Omit<CompletionCreateParams, "prompt" | "stream">;
 export type Role = "system" | "user" | "assistant";
-export type Message = { role: Role; content: string; name?: string };
+export interface Message { role: Role; content: string; name?: string }
 
 export default async () => {
   const py = await getPy();
@@ -18,11 +18,10 @@ export default async () => {
 
     constructor(text: string);
     constructor(input: string | PyProxy) {
-      if (typeof input === "string") {
+      if (typeof input === "string")
         this.proxy = py.runPython(`Template(${JSON.stringify(input)})`);
-      } else {
+      else
         this.proxy = input;
-      }
     }
 
     static fetch(url: string | URL) {
@@ -48,14 +47,14 @@ export default async () => {
     AsyncChatGenerate(clientOptions: ClientOptions) {
       return async function* (input: string, options?: ChatCompletionParams) {
         const generate: PyCallable = (py.runPython("AsyncChatGenerate") as PyCallable).callKwargs(await toPyOptions(clientOptions));
-        yield* generate.callKwargs(input, { ...options });
+        yield * generate.callKwargs(input, { ...options });
         generate.destroy();
       };
     },
     AsyncTextGenerate(clientOptions: ClientOptions) {
       return async function* (input: string, options?: TextCompletionParams) {
         const generate: PyCallable = (py.runPython("AsyncTextGenerate") as PyCallable).callKwargs(await toPyOptions(clientOptions));
-        yield* generate.callKwargs(input, { ...options });
+        yield * generate.callKwargs(input, { ...options });
         generate.destroy();
       };
     },

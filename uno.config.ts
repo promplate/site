@@ -1,6 +1,6 @@
-import extractorSvelte from "@unocss/extractor-svelte";
-import { defineConfig, presetUno, presetWebFonts, presetIcons, presetTypography, transformerDirectives, transformerVariantGroup } from "unocss";
 import { presetHeroPatterns } from "@julr/unocss-preset-heropatterns";
+import extractorSvelte from "@unocss/extractor-svelte";
+import { defineConfig, presetIcons, presetTypography, presetUno, presetWebFonts, transformerDirectives, transformerVariantGroup } from "unocss";
 
 const config = defineConfig({
   extractors: [extractorSvelte()],
