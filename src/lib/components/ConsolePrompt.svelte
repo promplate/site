@@ -2,7 +2,7 @@
   export let prompt = ">>>";
 </script>
 
-<span class="select-none op-40">{`${prompt} `}</span>
+<span class="select-none op-25">{`${prompt} `}</span>
 
 <style>
   span {

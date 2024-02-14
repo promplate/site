@@ -3,6 +3,7 @@
   import type { KeyboardEventHandler } from "svelte/elements";
 
   import ConsolePrompt from "$lib/components/ConsolePrompt.svelte";
+  import InlineCode from "$lib/components/InlineCode.svelte";
   import { getPy, initConsole } from "$lib/pyodide";
   import { onMount } from "svelte";
 
@@ -43,7 +44,7 @@
   let status: Status = "complete";
 
   onMount(async () => {
-    history.unshift(...JSON.parse(localStorage.getItem("console-history") || "[]"));
+    history.unshift(...(JSON.parse(localStorage.getItem("console-history") || "[]") as string[]).slice(0, 200));
     inputRef.focus();
 
     const py = await getPy();
@@ -160,12 +161,14 @@
   };
 </script>
 
-<div class="my-8 w-[calc(100vw-4rem)] flex flex-col gap-0.5 overflow-x-scroll whitespace-pre-wrap rounded bg-white/5 p-5 font-mono <lg:(my-6 w-[calc(100vw-3rem)] p-4 text-sm) <sm:(my-4 w-[calc(100vw-2rem)] p-3 text-xs) [&>div:hover]:(rounded bg-white/5 px-1 py-0.5 -mx-1 -my-0.5)">
+<div class="my-8 w-[calc(100vw-4rem)] flex flex-col gap-0.7 overflow-x-scroll whitespace-pre-wrap rounded bg-white/3 p-5 text-neutral-3 font-mono <lg:(my-6 w-[calc(100vw-3rem)] p-4 text-sm) <sm:(my-4 w-[calc(100vw-2rem)] p-3 text-xs) [&>div:hover]:(rounded bg-white/3 px-1.5 py-0.6 -mx-1.5 -my-0.6)">
   {#each joinLog(log) as { type, text, incomplete }}
     {#if type === "out"}
       <div class="text-yellow-2">{text}</div>
     {:else if type === "in"}
-      <div><ConsolePrompt prompt={incomplete ? "..." : ">>>"} />{text}</div>
+      <div>
+        <ConsolePrompt prompt={incomplete ? "..." : ">>>"} /><InlineCode {text}></InlineCode>
+      </div>
     {:else if type === "err"}
       <div class="text-red-4">{text}</div>
     {:else if type === "repr"}
