@@ -2,7 +2,7 @@
 
 from micropip import install
 
-await install("promplate-pyodide")
+await install("promplate-pyodide==0.0.1")
 del install
 
 from promplate_pyodide import patch_promplate

@@ -16,7 +16,8 @@ export async function getPy() {
 
   py = await loadPyodide({ indexURL, env: { ...env } });
   await py.loadPackage("micropip");
-  py.registerJsModule("openai", { AsyncClient, Client: null, version: await import("openai/version"), __all__: [] });
+  py.registerJsModule("openai", { AsyncClient, Client: () => null, version: await import("openai/version"), __all__: [] });
+  py.registerJsModule("httpx", { AsyncClient: () => null, Client: () => null });
   await py.runPythonAsync(initCode);
   return py;
 }
