@@ -6,10 +6,9 @@ jobs:
   check:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v1
       - name: Install modules
-        run: npm install
-      - name: Show environment info
-        run: npm run lint --env-info
+        run: bun install
       - name: Run ESLint
-        run: npm run lint
+        run: bun lint
