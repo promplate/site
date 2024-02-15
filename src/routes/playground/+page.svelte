@@ -18,22 +18,6 @@
   const history: string[] = [];
   let index = -1;
 
-  function joinLog(log: Item[]) {
-    let res: Item[] = [];
-    log.forEach(({ type, text, incomplete }) => {
-      const last = res.at(-1);
-
-      if (last && last.type === type && last.text.at(-1) === "\n" && last.text.at(-2) !== "\n" && text === "\n") {
-        last.text += text;
-        res = [...res.slice(0, -1), last];
-      }
-      else if (text) {
-        res.push({ type, text, incomplete });
-      }
-    });
-    return res;
-  }
-
   let input = "";
   let inputRef: HTMLInputElement;
 
@@ -42,6 +26,24 @@
   let complete: (source: string) => [string[], number];
 
   let status: Status = "complete";
+
+  function pushLog(item: Item) {
+    if (!item.text)
+      return;
+
+    if (!log.length)
+      return (log = [item]);
+
+    const last = log.at(-1)!;
+
+    if (last.type === item.type && (item.type === "out" || (item.type === "in" && item.incomplete))) {
+      last.text += item.type === "in" && item.text !== "\n" ? `\n${item.text}` : item.text;
+      log = [...log];
+    }
+    else {
+      log = [...log, item];
+    }
+  }
 
   onMount(async () => {
     history.unshift(...(JSON.parse(localStorage.getItem("console-history") || "[]") as string[]).slice(0, 200));
@@ -53,13 +55,8 @@
     getWrapped = py.globals.get("get_wrapped");
     complete = py.globals.get("complete");
 
-    pyConsole.stdout_callback = (str: string) => {
-      log = [...log, { type: "out", text: str.trim() ? str.trimEnd() : "" }];
-    };
-
-    pyConsole.stderr_callback = (str: string) => {
-      log = [...log, { type: "err", text: str.trim() ? str.trimEnd() : "" }];
-    };
+    pyConsole.stdout_callback = (text: string) => pushLog({ type: "out", text });
+    pyConsole.stderr_callback = (text: string) => pushLog({ type: "err", text });
 
     loading = false;
 
@@ -71,21 +68,23 @@
   async function push(source: string) {
     const future: PyAwaitable & { syntax_check: Status; formatted_error: string } = pyConsole.push(source);
 
-    log = [...log, { type: "in", text: source, incomplete: status === "incomplete" }];
+    pushLog({ type: "in", text: source || "\n", incomplete: status === "incomplete" });
 
     status = future.syntax_check;
     if (status === "syntax-error") {
-      log = [...log, { type: "err", text: `Traceback (most recent call last):\n${future.formatted_error}` }];
+      pushLog({ type: "err", text: `Traceback (most recent call last):\n${future.formatted_error}` });
     }
     else if (status === "complete") {
       loading = true;
       try {
         const [result, repr] = await getWrapped(future);
-        log = [...log, { type: "repr", text: repr ?? "" }];
-        pyConsole.globals.set("_", result);
+        if (result != null) {
+          pushLog({ type: "repr", text: repr });
+          pyConsole.globals.set("_", result);
+        }
       }
       catch (e) {
-        log = [...log, { type: "err", text: (e as PythonError).message }];
+        pushLog({ type: "err", text: (e as PythonError).message });
       }
       finally {
         loading = false;
@@ -161,13 +160,21 @@
   };
 </script>
 
-<div class="my-8 w-[calc(100vw-4rem)] flex flex-col gap-0.7 overflow-x-scroll whitespace-pre-wrap rounded bg-white/3 p-5 text-neutral-3 font-mono <lg:(my-6 w-[calc(100vw-3rem)] p-4 text-sm) <sm:(my-4 w-[calc(100vw-2rem)] p-3 text-xs) [&>div:hover]:(rounded bg-white/3 px-1.5 py-0.6 -mx-1.5 -my-0.6)">
-  {#each joinLog(log) as { type, text, incomplete }}
+<div class="my-8 w-[calc(100vw-4rem)] flex flex-col gap-0.7 overflow-x-scroll whitespace-pre-wrap rounded bg-white/3 p-5 text-neutral-3 font-mono <lg:(my-6 w-[calc(100vw-3rem)] p-4 text-sm) <sm:(my-4 w-[calc(100vw-2rem)] p-3 text-xs) [&>div:hover]:(rounded-sm bg-white/2 px-1.7 py-0.6 -mx-1.7 -my-0.6)">
+  {#each log as { type, text }}
     {#if type === "out"}
       <div class="text-yellow-2">{text}</div>
     {:else if type === "in"}
-      <div>
-        <ConsolePrompt prompt={incomplete ? "..." : ">>>"} /><InlineCode {text}></InlineCode>
+      <div class="group flex flex-row">
+        <div class="flex flex-col">
+          <ConsolePrompt />
+          {#if text !== "\n"}
+            {#each Array.from({ length: text.match(/\n/g)?.length ?? 0 }) as _}
+              <ConsolePrompt prompt="..." />
+            {/each}
+          {/if}
+        </div>
+        <InlineCode {text}></InlineCode>
       </div>
     {:else if type === "err"}
       <div class="text-red-4">{text}</div>
@@ -175,8 +182,8 @@
       <div class="text-cyan-2">{text}</div>
     {/if}
   {/each}
-  <div class="flex flex-row items-center" class:animate-pulse={loading}>
+  <div class="group flex flex-row" class:animate-pulse={loading}>
     <ConsolePrompt prompt={status === "incomplete" ? "..." : ">>>"} />
-    <input bind:this={inputRef} class="w-full rounded bg-transparent outline-none" bind:value={input} type="text" on:keydown={onKeyDown} />
+    <input bind:this={inputRef} class="h-none m-0 w-full rounded bg-transparent p-0 outline-none" bind:value={input} type="text" on:keydown={onKeyDown} />
   </div>
 </div>
