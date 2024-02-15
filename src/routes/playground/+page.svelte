@@ -28,16 +28,13 @@
   let status: Status = "complete";
 
   function pushLog(item: Item) {
-    if (!item.text)
-      return;
-
     if (!log.length)
       return (log = [item]);
 
     const last = log.at(-1)!;
 
     if (last.type === item.type && (item.type === "out" || (item.type === "in" && item.incomplete))) {
-      last.text += item.type === "in" && item.text !== "\n" ? `\n${item.text}` : item.text;
+      last.text += item.type === "in" ? `\n${item.text}` : item.text;
       log = [...log];
     }
     else {
@@ -68,7 +65,7 @@
   async function push(source: string) {
     const future: PyAwaitable & { syntax_check: Status; formatted_error: string } = pyConsole.push(source);
 
-    pushLog({ type: "in", text: source || "\n", incomplete: status === "incomplete" });
+    pushLog({ type: "in", text: source, incomplete: status === "incomplete" });
 
     status = future.syntax_check;
     if (status === "syntax-error") {
@@ -166,7 +163,7 @@
       <div class="text-yellow-2">{text}</div>
     {:else if type === "in"}
       <div class="group flex flex-row">
-        <div class="flex flex-col">
+        <div class="min-h-1.4em flex flex-shrink-0 flex-col gap-0.7">
           <ConsolePrompt />
           {#if text !== "\n"}
             {#each Array.from({ length: text.match(/\n/g)?.length ?? 0 }) as _}
