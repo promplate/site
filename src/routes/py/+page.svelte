@@ -1,6 +1,6 @@
 <script>
-  import CodeBlock from "$lib/components/CodeBlock.svelte";
   import { examplePythonOutput, examplePythonScript } from "$lib";
+  import CodeBlock from "$lib/components/CodeBlock.svelte";
   import { onMount } from "svelte";
 
   let forceShowArrow = true;
@@ -31,8 +31,8 @@
             <img src="https://static.pepy.tech/badge/promplate/month" alt="monthly downloads" />
           </a>
         </div>
-        <a class="group relative flex flex-row items-center gap-1 overflow-x-hidden rounded-sm bg-white/10 px-2.5 py-2 tracking-wide capitalize transition-all duration-500 hover:(bg-white/5 pr-7 ring-1.3 ring-white/80 duration-250)" href="/py/quick-start" class:pr-7={forceShowArrow}>
-          1 minute tutorial
+        <a class="group relative flex flex-row items-center gap-1 overflow-x-hidden rounded-sm bg-white/10 px-2.5 py-2 tracking-wide tracking-widest capitalize transition-all duration-500 hover:(bg-white/5 pr-7 ring-1.3 ring-white/80 duration-250)" href="/py/quick-start" class:pr-7={forceShowArrow}>
+          零门槛 立即体验
           <div class="i-line-md-chevron-small-double-right absolute text-xl op-0 transition-all duration-500 -right-5 group-hover:(right-1.5 op-80 duration-250)" class:show={forceShowArrow} />
         </a>
       </div>

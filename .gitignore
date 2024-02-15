@@ -14,3 +14,4 @@ bun.lockb
 .vscode
 .vercel
 .netlify
+static/pyodide

@@ -1,39 +1,8 @@
-export const examplePythonScript = `
+import examplePythonScript from "./examples/show-time-and-translate.py?raw";
 
-from promplate.llm.openai import ChatComplete
-from promplate import Node
-
-reply = Node("""
-<| system |>
-Now is {{ time.localtime() }}
-<| user |>
-What the time is it?
-""".strip(), temperature=0.8)
-
-translate = Node("""
-Translate the following dialog to \`ja_JP\`:
-{{ name.title() }}: {{ __result__ }}
-""".strip(), temperature=0.2)
-
-chain = reply + translate
-
-chain.complete = ChatComplete(model="gpt-3.5-turbo-1106")
-
-def main():
-    """🚀 执行这整个 chain 🚀"""
-
-    import time
-
-    name = "John"
-
-    return chain.run(locals()).result
-
-`.trim();
+export { examplePythonScript };
 
 export const examplePythonOutput = `
->>> chain
-</reply/> + </translate/>
-
->>> main()
-'ジョン：現在の時刻は午前2時11分です。'
+>>> print(output.result)
+'Muspi Merol: あけましておめでとうございます！2024年です！'
 `.trim();

@@ -32,23 +32,36 @@ pip install promplate[openai] -i https://pypi.tuna.tsinghua.edu.cn/simple
 
 <CodeBlock code={`
 >>> from promplate.llm.openai import ChatComplete  # 这个类只是对OpenAI的官方SDK的封装而已
->>> complete = ChatComplete(model="gpt-3.5-turbo-1106", api_key="...")
+>>> complete = ChatComplete(api_key="...")
 `.trim()} />
 
 > 在 `api_key` 填你的 [API Key](https://platform.openai.com/account/api-keys) 就行
 
+然后像这样调用：
+
+<CodeBlock code={`
+>>> complete("hi", model="gpt-3.5-turbo-0125")
+'Hello! How can I assist you today?'
+`.trim()} />
+
+你可能懒得每次调用 `complete` 的时候都要填写 `model` 参数，那你可以把参数绑定到 `complete` 上面：
+
+<CodeBlock code={`
+>>> complete = ChatComplete(api_key="...").bind(model="gpt-3.5-turbo-0125")
+`.trim()} />
+
 然后只需用一个字符串来调用它：
 
 <CodeBlock code={`
->>> complete("hi")
+>>> complete("hi", model="gpt-3.5-turbo-0125")
 'Hello! How can I assist you today?'
 `.trim()} />
 
 <Details summary="😭😭 如果你没有 API Key">
-我有个教育目的的免费代理站，你不用 API Key 也能免费使用。像这样填写 <code>api_base</code> 字段即可：
+我有个教育目的的免费代理站，你不用 API Key 也能免费使用。像这样填写 <code>base_url</code> 字段即可：
 <CodeBlock code={`
 >>> from promplate.llm.openai import ChatComplete
->>> complete = ChatComplete(model="gpt-3.5-turbo-1106", api_base="https://promplate.dev")
+>>> complete = ChatComplete(base_url="https://promplate.dev", api_key="").bind(model="gpt-3.5-turbo-0125")
 >>> complete("hi")
 'Hello! How can I assist you today?'
 `.trim()} />
@@ -58,7 +71,7 @@ pip install promplate[openai] -i https://pypi.tuna.tsinghua.edu.cn/simple
 只需简单地将 <code>ChatComplete</code> 替换为 <code>TextComplete</code>：
 <CodeBlock code={`
 >>> from promplate.llm.openai import TextComplete
->>> complete = TextComplete(model="gpt-3.5-turbo-instruct", api_key="...")
+>>> complete = TextComplete(api_key="...").bind(model="gpt-3.5-turbo-instruct")
 >>> complete("I am")
 ' just incredibly proud of the team, and their creation of a brand new ship makes'
 `.trim()} />
@@ -73,7 +86,7 @@ pip install promplate[openai] -i https://pypi.tuna.tsinghua.edu.cn/simple
 这仍然非常简单，只需使用 <code>ChatGenerate</code>：
 <CodeBlock code={`
 >>> from promplate.llm.openai import ChatGenerate
->>> generate = ChatGenerate(model="gpt-3.5-turbo-1106", api_key="...")
+>>> generate = ChatGenerate(api_key="...").bind(model="gpt-3.5-turbo-0125")
 >>> for i in generate("Explain why 1 + 1 = 2"):
 ...     print(i, end="", flush=True)  # 这会逐渐打印生成的token
 ...
@@ -119,12 +132,12 @@ This principle is consistent and holds true in all contexts and across different
 - 将大任务分解成子任务可能会增强可解释性，debug 时更容易定位错误
 - ...
 
-在 `prompate` 中，我们使用 `Node` 来表示一个单一的"任务"。你可以用一个字符串来初始化一个 `Task`：
+在 `prompate` 中，我们使用 `Node` 来表示一个单一的"任务"。你可以用一个字符串来初始化一个"任务"：
 
 <CodeBlock code={`
 >>> from promplate import Node
->>> greet = Node("Greet me. It is {{ time.asctime() }} now.")
->>> greet.render(locals())
+>>> greet = Node("Greet me. It is {{ time.asctime() }} now.", locals())
+>>> greet.render()
 'Greet me. It is Sun Oct  1 04:16:04 2023 now.'
 `.trim()} />
 
@@ -141,9 +154,11 @@ This principle is consistent and holds true in all contexts and across different
 <CodeBlock code={`
 >>> translate = Node('translate """{{ __result__ }}""" into {{ target_language }}')
 >>> chain = greet + translate  # 这表示了"用中文打招呼"的流程
->>> chain.run({"target_language": "zh_CN"}, complete).result
+>>> chain.invoke({"target_language": "zh_CN"}, complete).result
 '早上好！'
 `.trim()} />
+
+<Details summary="Details">
 
 注意 `.run()` 的返回类型是 `ChainContext`，这是一个 `dict` 的子类，但是比 `dict` 多了一些东西：
 
@@ -155,18 +170,19 @@ This principle is consistent and holds true in all contexts and across different
 
 <CodeBlock code={`
 >>> template = Template("...")
->>> complete(template.render({}))
+>>> complete(template.render())
 `.trim()} />
 
 <CodeBlock code={`
->>> Node("...").run({})["__result__"]
+>>> Node("...").invoke()["__result__"]
 `.trim()} />
 
 <CodeBlock code={`
->>> Node("...").run({}).result
+>>> Node("...").invoke().result
 `.trim()} />
 
 这部分可能有点难理解。这是为了这个框架的灵活性。事实上，等你的流水线越来越长了，你会发现这就是最佳实践。
+</Details>
 
 ### Agent = LLM + Tools! 给 `Chain` 注册回调！
 
@@ -177,17 +193,17 @@ This principle is consistent and holds true in all contexts and across different
 - 后一个 `Node` 可能不能直接使用前一个 `Node` 的结果，而是需要进行一些处理
 - ...
 
-在 `promplate` 中，你可以在 LLM 运行前后分别注册一个或多个回调，分别称为"预处理"和"后处理"
+在 `promplate` 中，你可以在 LLM 运行前后分别注册一个或多个回调，作为"预处理"和"后处理"
 
-除了在 `Node` 初始化时传入，还可以用装饰器的方式注册回调：
+除了手动实现 `Callback` 接口，你可以直接用装饰器语法来注册回调：
 
 <CodeBlock code={`
->>> @greet.post_process
+>>> @greet.end_process
 ... def log_greet_result(context):
 ...     print(context.result)
 ...     print(context["target_language"])
 ...
->>> chain.run({"target_language": "zh_CN"}, complete).result
+>>> chain.invoke({"target_language": "zh_CN"}, complete).result
 Good morning!
 zh_CN
 '早上好！'
@@ -198,3 +214,4 @@ zh_CN
 ---
 
 恭喜你 🎉 你已经学会了使用 `promplate` 进行提示工程的基本范式。感谢你的阅读！还有很多没有提到的特性在这个速成教程中没有提到。你可以前往其它页面了解更多 🤗
+有任何问题，都欢迎在 [GitHub Discussions](https://github.com/promplate/core/discussions/categories/q-a) 提问！

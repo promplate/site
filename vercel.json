@@ -1,0 +1,14 @@
+{
+  "headers": [
+    {
+      "source": "/hub/(.*)",
+      "headers": [
+        { "key": "access-control-max-age", "value": "86400" },
+        { "key": "access-control-allow-origin", "value": "*" },
+        { "key": "access-control-allow-headers", "value": "*" },
+        { "key": "access-control-allow-credentials", "value": "true" },
+        { "key": "access-control-allow-methods", "value": "HEAD, GET, OPTIONS" }
+      ]
+    }
+  ]
+}

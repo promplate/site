@@ -1,14 +1,15 @@
 <script>
-  import { dev } from "$app/environment";
-  import { PUBLIC_HEAD_SCRIPTS } from "$env/static/public";
   import "@unocss/reset/tailwind-compat.css";
-  import { page } from "$app/stores";
   import "uno.css";
 
-  const headScripts = atob(PUBLIC_HEAD_SCRIPTS ?? "");
+  import { dev } from "$app/environment";
+  import { page } from "$app/stores";
+  import * as env from "$env/static/public";
+
+  const headScripts = atob(env.PUBLIC_HEAD_SCRIPTS ?? "");
 
   const ogTitle = "Promplate 中文文档";
-  const ogImage = $page.url.origin + "/og" + $page.url.pathname;
+  const ogImage = `${$page.url.origin}/og${$page.url.pathname}`;
   const ogDescription = "提示工程框架 Promplate 的官方中文文档";
 </script>
 
