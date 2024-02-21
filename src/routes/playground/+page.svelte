@@ -1,11 +1,18 @@
 <script lang="ts">
+  import type { ActionData } from "./$types";
   import type { PyAwaitable, PyProxy, PythonError } from "pyodide/ffi";
   import type { KeyboardEventHandler } from "svelte/elements";
 
+  import { page } from "$app/stores";
   import ConsolePrompt from "$lib/components/ConsolePrompt.svelte";
   import InlineCode from "$lib/components/InlineCode.svelte";
   import { getPy, initConsole } from "$lib/pyodide";
+  import { toAsync } from "$lib/pyodide/translate";
   import { onMount } from "svelte";
+
+  export let form: ActionData;
+
+  const { source } = (form ?? $page.state) as { source?: string };
 
   type Item = { type: "out" | "err" | "in" | "repr"; text: string; incomplete?: boolean };
 
@@ -57,9 +64,20 @@
 
     loading = false;
 
-    await push("from promplate import *");
-    await push("from promplate.llm.openai import *");
-    await push("# now all exposed APIs of promplate are available");
+    if (source) {
+      const shouldStrip = source.includes(">>> ");
+      for (const line of source.split("\n")) {
+        if (shouldStrip)
+          (line.startsWith(">>> ") || line.startsWith("... ")) && (await push(toAsync(line.slice(4))));
+        else
+          await push(toAsync(line));
+      }
+    }
+    else {
+      await push("from promplate import *");
+      await push("from promplate.llm.openai import *");
+      await push("# now all exposed APIs of promplate are available");
+    }
   });
 
   async function push(source: string) {
@@ -162,17 +180,21 @@
     {#if type === "out"}
       <div class="text-yellow-2">{text}</div>
     {:else if type === "in"}
-      <div class="group flex flex-row">
-        <div class="min-h-1.4em flex flex-shrink-0 flex-col gap-0.7">
-          <ConsolePrompt />
-          {#if text !== "\n"}
+      {#if text !== ""}
+        <div class="group flex flex-row [&_.line]:!min-h-1.5em">
+          <div class="min-h-1.4em flex flex-shrink-0 flex-col gap-0.7">
+            <ConsolePrompt />
             {#each Array.from({ length: text.match(/\n/g)?.length ?? 0 }) as _}
               <ConsolePrompt prompt="..." />
             {/each}
-          {/if}
+          </div>
+          <InlineCode {text}></InlineCode>
         </div>
-        <InlineCode {text}></InlineCode>
-      </div>
+      {:else}
+        <section class="animate-(fade-out duration-300 both)">
+          <ConsolePrompt />
+        </section>
+      {/if}
     {:else if type === "err"}
       <div class="text-red-4">{text}</div>
     {:else if type === "repr"}

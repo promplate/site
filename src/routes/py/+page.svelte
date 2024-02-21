@@ -46,7 +46,7 @@
       </div>
     </div>
     <div class="flex flex-col gap-4 lg:max-h-[calc(100vh-5rem)] [&>section]:<sm:w-[calc(100vw-3rem)]">
-      <CodeBlock code={examplePythonScript} collapse />
+      <CodeBlock code={examplePythonScript} collapse portal />
       <CodeBlock code={examplePythonOutput} />
     </div>
   </div>

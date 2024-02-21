@@ -50,3 +50,7 @@ export function toJsOptions(options: PyClientOptions) {
 export function AsyncClient(options: PyClientOptions) {
   return new OpenAI(toJsOptions(options));
 }
+
+export function toAsync(source: string) {
+  return source.replaceAll(/(\S+|\(.*\))\.invoke/g, `await $1.ainvoke`).replaceAll("ChatComplete", "AsyncChatComplete");
+}
