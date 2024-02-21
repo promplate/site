@@ -18,7 +18,7 @@
 
   type Status = "incomplete" | "syntax-error" | "complete";
 
-  let loading = true;
+  let loading = 1;
 
   let log: Item[] = [];
 
@@ -34,7 +34,7 @@
 
   let status: Status = "complete";
 
-  function pushLog(item: Item) {
+  function pushLog(item: Item, behind?: Item) {
     if (!log.length)
       return (log = [item]);
 
@@ -43,6 +43,10 @@
     if (last.type === item.type && (item.type === "out" || (item.type === "in" && item.incomplete))) {
       last.text += item.type === "in" ? `\n${item.text}` : item.text;
       log = [...log];
+    }
+    else if (behind) {
+      const index = log.findIndex(item => item === behind);
+      log = [...log.slice(0, index), behind, item, ...log.slice(index + 1)];
     }
     else {
       log = [...log, item];
@@ -62,15 +66,15 @@
     pyConsole.stdout_callback = (text: string) => pushLog({ type: "out", text });
     pyConsole.stderr_callback = (text: string) => pushLog({ type: "err", text });
 
-    loading = false;
+    loading--;
 
     if (source) {
       const shouldStrip = source.includes(">>> ");
       for (const line of source.split("\n")) {
         if (shouldStrip)
-          (line.startsWith(">>> ") || line.startsWith("... ")) && (await push(toAsync(line.slice(4))));
+          (line.startsWith(">>> ") || line.startsWith("... ")) && push(toAsync(line.slice(4)));
         else
-          await push(toAsync(line));
+          push(toAsync(line));
       }
     }
     else {
@@ -83,26 +87,27 @@
   async function push(source: string) {
     const future: PyAwaitable & { syntax_check: Status; formatted_error: string } = pyConsole.push(source);
 
-    pushLog({ type: "in", text: source, incomplete: status === "incomplete" });
+    const inputLog: Item = { type: "in", text: source, incomplete: status === "incomplete" };
+    pushLog(inputLog);
 
     status = future.syntax_check;
     if (status === "syntax-error") {
-      pushLog({ type: "err", text: `Traceback (most recent call last):\n${future.formatted_error}` });
+      pushLog({ type: "err", text: `Traceback (most recent call last):\n${future.formatted_error}` }, inputLog);
     }
     else if (status === "complete") {
-      loading = true;
+      loading++;
       try {
         const [result, repr] = await getWrapped(future);
         if (result != null) {
-          pushLog({ type: "repr", text: repr });
+          pushLog({ type: "repr", text: repr }, inputLog);
           pyConsole.globals.set("_", result);
         }
       }
       catch (e) {
-        pushLog({ type: "err", text: (e as PythonError).message });
+        pushLog({ type: "err", text: (e as PythonError).message }, inputLog);
       }
       finally {
-        loading = false;
+        loading--;
       }
     }
   }
