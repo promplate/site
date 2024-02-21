@@ -1,6 +1,7 @@
 import type * as Core from "openai/core";
 import type { PyProxy } from "pyodide/ffi";
 
+import { env } from "$env/dynamic/public";
 import { type ClientOptions, OpenAI } from "openai";
 
 interface PyClientOptions {
@@ -35,8 +36,8 @@ export async function toPyOptions(options: ClientOptions) {
 
 export function toJsOptions(options: PyClientOptions) {
   return {
-    baseURL: options.base_url,
-    apiKey: options.api_key,
+    baseURL: options.base_url ?? env.PUBLIC_OPENAI_API_BASE,
+    apiKey: options.api_key ?? env.PUBLIC_OPENAI_API_KEY ?? "",
     organization: options.organization,
     timeout: options.timeout,
     maxRetries: options.max_retries,
