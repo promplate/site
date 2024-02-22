@@ -1,3 +1,5 @@
+import type { Config } from "@sveltejs/adapter-vercel";
+
 import { text } from "@sveltejs/kit";
 import { pull } from "$lib/hub";
 
@@ -52,3 +54,6 @@ export async function GET({ params }) {
     return text("", { status: 404 });
   }
 }
+
+// @ts-expect-error override isr config
+export const config: Config = { runtime: "edge", isr: false };

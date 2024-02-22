@@ -6,3 +6,5 @@ export const actions = {
     return Object.fromEntries(data.entries()) as { source: string };
   },
 } satisfies Actions;
+
+export const prerender = false;

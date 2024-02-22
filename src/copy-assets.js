@@ -6,6 +6,6 @@ const pyodideDir = dirname(createRequire(resolve("node_modules")).resolve("pyodi
 const targetDir = resolve(join("static", "pyodide"));
 
 if (!fs.existsSync(targetDir)) {
-  console.log({ targetDir, pyodideDir });
+  fs.rmSync(targetDir, { force: true });
   fs.symlinkSync(pyodideDir, targetDir);
 }
