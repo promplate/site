@@ -10,7 +10,7 @@
   code = code.replaceAll("\r", "");
 </script>
 
-<section class:shrink-0={!collapse} class="not-prose relative overflow-y-scroll b-1 b-white/10 rounded-md bg-#121212">
+<section class:shrink-0={!collapse} class="not-prose relative overflow-y-scroll b-1 b-white/10 rounded-md bg-#121212 [&>pre]:!line-height-relaxed">
   {#key code}
     {#await highlight(lang, code)}
       <pre class="text-white/70">{code}</pre>
@@ -29,6 +29,6 @@
   }
 
   section :global(pre *) {
-    --uno: font-mono selection:bg-white/10 line-height-relaxed;
+    --uno: font-mono selection:bg-white/10;
   }
 </style>

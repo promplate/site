@@ -208,6 +208,6 @@
   {/each}
   <div class="group flex flex-row" class:animate-pulse={loading}>
     <ConsolePrompt prompt={status === "incomplete" ? "..." : ">>>"} />
-    <input bind:this={inputRef} class="h-none m-0 w-full rounded bg-transparent p-0 outline-none" bind:value={input} type="text" on:keydown={onKeyDown} />
+    <input bind:this={inputRef} class="w-full bg-transparent outline-none" bind:value={input} type="text" on:keydown={onKeyDown} />
   </div>
 </div>
