@@ -5,7 +5,7 @@ from promplate.llm.openai import ChatComplete
 
 reply_template = """
 <| system |>
-current time: {{ time.localtime() }}
+current time: {{ time.ctime() }}
 <| user |>
 Say happy new year to me in no more than 5 words.
 Note that you must include the year in the message.
@@ -18,7 +18,6 @@ Translate the following dialog to `ja_JP`:
 
 reply = Node(reply_template, temperature=0.8)
 translate = Node(translate_template, temperature=0.2)
-
 
 output = (reply + translate).invoke(
     {"time": time, "name": "muspi merol"},

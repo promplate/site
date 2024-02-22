@@ -24,7 +24,7 @@ First, **Open a python REPL** 💻 (`ipython` or `jupyter` are OK. Just any REPL
 
 **All the code below should run "as is"**, which means you can copy and paste them in your terminal and it will work fine.
 
-<CodeBlock portal code={`
+<CodeBlock id="chat-complete" code={`
 >>> from promplate.llm.openai import ChatComplete  # this simply wraps OpenAI's SDK
 >>> complete = ChatComplete(api_key="...")
 `.trim()} />
@@ -33,27 +33,27 @@ First, **Open a python REPL** 💻 (`ipython` or `jupyter` are OK. Just any REPL
 
 Then call it like this:
 
-<CodeBlock code={`
+<CodeBlock portal previous={[{id: "chat-complete"}]} code={`
 >>> complete("hi", model="gpt-3.5-turbo-0125")
 'Hello! How can I assist you today?'
 `.trim()} />
 
 Perhaps you don't want to provide `model` parameter everytime you call `complete`, so you can bind it like this:
 
-<CodeBlock code={`
+<CodeBlock id="chat-complete-binded" code={`
 >>> complete = ChatComplete(api_key="...").bind(model="gpt-3.5-turbo-0125")
 `.trim()} />
 
 Then call it simply with a string:
 
-<CodeBlock code={`
->>> complete("hi", model="gpt-3.5-turbo-0125")
+<CodeBlock portal previous={[{id: "chat-complete", hidden: true}, {id: "chat-complete-binded"}]} code={`
+>>> complete("hi")
 'Hello! How can I assist you today?'
 `.trim()} />
 
 <Details summary="If you don't have an OpenAI API Key 🔑">
 You could use our FREE proxy site as <code>base_url</code> like this:
-<CodeBlock code={`
+<CodeBlock portal code={`
 >>> from promplate.llm.openai import ChatComplete
 >>> complete = ChatComplete(base_url="https://promplate.dev", api_key="").bind(model="gpt-3.5-turbo-0125")
 >>> complete("hi")
@@ -63,14 +63,14 @@ You could use our FREE proxy site as <code>base_url</code> like this:
 
 <Details summary="If you want to use instruct models 🤔">
 Simply replace <code>ChatComplete</code> by <code>TextComplete</code>:
-<CodeBlock code={`
+<CodeBlock portal id="text-complete-binded" code={`
 >>> from promplate.llm.openai import TextComplete
 >>> complete = TextComplete(api_key="...").bind(model="gpt-3.5-turbo-instruct")
 >>> complete("I am")
 ' just incredibly proud of the team, and their creation of a brand new ship makes'
 `.trim()} />
 And you can pass parameters when calling a <code>Complete</code> instance:
-<CodeBlock code={`
+<CodeBlock portal previous={[{id: "text-complete-binded"}]} code={`
 >>> complete("1 + 1 = ", temperature=0, max_tokens=1)
 '2'
 `.trim()} />
@@ -78,7 +78,7 @@ And you can pass parameters when calling a <code>Complete</code> instance:
 
 <Details summary="If you prefer to stream the response 👀">
 It is still super easy, just use <code>ChatGenerate</code>:
-<CodeBlock code={`
+<CodeBlock portal code={`
 >>> from promplate.llm.openai import ChatGenerate
 >>> generate = ChatGenerate(api_key="...").bind(model="gpt-3.5-turbo-0125")
 >>> for i in generate("Explain why 1 + 1 = 2"):
@@ -96,7 +96,7 @@ This principle is consistent and holds true in all contexts and across different
 There must be something dynamic in your prompt, like **user queries**, **retrieved context**, **search results**, etc.
 In **promplate**, simply use `{{ }}` to insert dynamic data.
 
-<CodeBlock portal code={`
+<CodeBlock portal id="greet-template" code={`
 >>> import time
 >>> from promplate import Template
 >>> greet = Template("Greet me. It is {{ time.asctime() }} now.")
@@ -106,7 +106,7 @@ In **promplate**, simply use `{{ }}` to insert dynamic data.
 
 You can run the prompt by `complete` we created before
 
-<CodeBlock code={`
+<CodeBlock portal previous={[{id: "chat-complete", hidden: true}, {id: "chat-complete-binded", wait: true}, {id: "greet-template", wait: true}]} code={`
 >>> complete(_)
 'Good morning!'
 `.trim()} />
@@ -136,7 +136,7 @@ Sometimes we don't use a single prompt to complete. Here are some reasons:
 
 In `prompate`, We use a `Node` to represent a single "task". You can initialize a `Task` with a string like initiating a `Template`:
 
-<CodeBlock code={`
+<CodeBlock id="greet-node" portal previous={[{id: "greet-template", hidden: true}]} code={`
 >>> from promplate import Node
 >>> greet = Node("Greet me. It is {{ time.asctime() }} now.", locals())
 >>> greet.render()
@@ -147,10 +147,11 @@ But **there are far more utilities**.
 
 Such as, you can **add two nodes together** magically:
 
-<CodeBlock code={`
+<CodeBlock id="chain" portal previous={[{id: "chat-complete", hidden: true}, {id: "chat-complete-binded", hidden: true}, {id: "greet-template", hidden: true}, {id: "greet-node", hidden: true}]} code={`
 >>> translate = Node('translate """{{ __result__ }}""" into {{ target_language }}')
 >>> chain = greet + translate  # this represents the pipeline of "greeting in another language"
->>> chain.invoke({"target_language": "zh_CN"}, complete).result
+>>> chain.invoke({"target_language": "zh_CN"}, complete)
+>>> _.result
 '早上好！'
 `.trim()} />
 
@@ -191,16 +192,17 @@ In `promplate`, you can register a callback everytime before or after a node run
 
 Besides manually implementing the `Callback` interface, you can directly use decorators syntax like so:
 
-<CodeBlock code={`
+<CodeBlock portal previous={[{id: "chat-complete", hidden: true}, {id: "chat-complete-binded", hidden: true}, {id: "greet-template", hidden: true}, {id: "greet-node", hidden: true}, {id: "chain", wait: true}]} code={`
 >>> @greet.end_process
+... @translate.end_process
 ... def log_greet_result(context):
 ...     print(context.result)
-...     print(context["target_language"])
 ...
->>> chain.invoke({"target_language": "zh_CN"}, complete).result
+>>> context = chain.invoke({"target_language": "zh_CN"}, complete)
 Good morning!
-zh_CN
-'早上好！'
+早上好！
+>>> context
+ChainContext({'target_language': 'zh_CN', '__result__': '早上好！'})
 `.trim()} />
 
 Congratulations 🎉 You've learnt the basic paradigm of using `promplate` for prompt engineering.

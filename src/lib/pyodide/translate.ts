@@ -52,5 +52,19 @@ export function AsyncClient(options: PyClientOptions) {
 }
 
 export function toAsync(source: string) {
-  return source.replaceAll(/(\S+|\(.*\))\.invoke/g, `await $1.ainvoke`).replaceAll("ChatComplete", "AsyncChatComplete");
+  return source
+    .replaceAll(/(\S+|\(.*\))\.invoke/g, "await $1.ainvoke")
+    .replaceAll("ChatComplete", "AsyncChatComplete")
+    .replaceAll("complete(", "await complete(")
+    .replaceAll(/for (\w+) in generate/g, "async for $1 in generate");
+}
+
+export function patchSource(source: string) {
+  const shouldStrip = source.includes(">>> ");
+
+  return (
+    shouldStrip
+      ? source.split("\n").filter(line => line.startsWith(">>>") || line.startsWith("...")).map(line => toAsync(line.slice(4)))
+      : source.split("\n").map(toAsync)
+  ).join("\n");
 }

@@ -1,5 +1,6 @@
 <script lang="ts">
   import type { ActionData } from "./$types";
+  import type { Source } from "$lib/utils/source";
   import type { PyAwaitable, PyProxy, PythonError } from "pyodide/ffi";
   import type { KeyboardEventHandler } from "svelte/elements";
 
@@ -7,12 +8,12 @@
   import ConsolePrompt from "$lib/components/ConsolePrompt.svelte";
   import InlineCode from "$lib/components/InlineCode.svelte";
   import { getPy, initConsole } from "$lib/pyodide";
-  import { toAsync } from "$lib/pyodide/translate";
+  import { patchSource } from "$lib/pyodide/translate";
   import { onMount } from "svelte";
 
   export let form: ActionData;
 
-  const { source } = (form ?? $page.state) as { source?: string };
+  const { sources } = (form ?? $page.state) as { sources?: Source[] };
 
   type Item = { type: "out" | "err" | "in" | "repr"; text: string; incomplete?: boolean };
 
@@ -69,19 +70,23 @@
 
     loading--;
 
-    if (source) {
-      const shouldStrip = source.includes(">>> ");
-      for (const line of source.split("\n")) {
-        if (shouldStrip)
-          (line.startsWith(">>> ") || line.startsWith("... ")) && push(toAsync(line.slice(4)));
-        else
-          push(toAsync(line));
+    async function pushMany(lines: string[], wait: boolean, hidden?: boolean) {
+      for (const line of lines) {
+        const promise = hidden ? pyConsole.push(line) : push(line);
+        wait && (await promise);
       }
     }
+
+    if (sources?.length) {
+      for (const { source, hidden, wait } of sources)
+        await pushMany(patchSource(source).split("\n"), Boolean(wait), hidden);
+    }
     else {
-      await push("from promplate import *");
-      await push("from promplate.llm.openai import *");
-      await push("# now all exposed APIs of promplate are available");
+      await pushMany([
+        "from promplate import *",
+        "from promplate.llm.openai import *",
+        "# now all exposed APIs of promplate are available",
+      ], true);
     }
   });
 
@@ -188,7 +193,7 @@
     {:else if type === "in"}
       {#if text !== ""}
         <div class="group flex flex-row [&_.line]:(min-h-4 lg:min-h-6 sm:min-h-5)">
-          <div class="min-h-sm:1.2 min-h-lg:1.4 min-h-(1) flex flex-shrink-0 flex-col gap-0.7">
+          <div class="min-h-1 flex flex-shrink-0 flex-col gap-0.7 lg:min-h-1.4 sm:min-h-1.2">
             <ConsolePrompt />
             {#each Array.from({ length: text.match(/\n/g)?.length ?? 0 }) as _}
               <ConsolePrompt prompt="..." />
@@ -209,6 +214,7 @@
   {/each}
   <div class="group flex flex-row" class:animate-pulse={loading}>
     <ConsolePrompt prompt={status === "incomplete" ? "..." : ">>>"} />
-    <input bind:this={inputRef} class="w-full bg-transparent outline-none" bind:value={input} type="text" on:keydown={onKeyDown} />
+    <!-- svelte-ignore a11y-autofocus -->
+    <input autofocus bind:this={inputRef} class="w-full bg-transparent outline-none" bind:value={input} type="text" on:keydown={onKeyDown} />
   </div>
 </div>

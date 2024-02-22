@@ -1,13 +1,23 @@
 <script lang="ts">
   import { highlight } from "../highlight";
-  import Form from "./Portal.svelte";
+  import Portal from "./Portal.svelte";
+  import { type SourceRef, saveSource } from "$lib/utils/source";
+  import { onMount } from "svelte";
 
   export let code: string;
   export let collapse = false;
   export let portal = false;
   export let lang = "python";
 
+  export let id: string | null = null;
+  export let previous: SourceRef[] = [];
+
   code = code.replaceAll("\r", "");
+
+  onMount(() => {
+    id && saveSource(id, code);
+  });
+
 </script>
 
 <section class:shrink-0={!collapse} class="not-prose relative overflow-y-scroll b-1 b-white/10 rounded-md bg-#121212 [&>pre]:!line-height-relaxed">
@@ -19,7 +29,7 @@
     {/await}
   {/key}
   {#if portal}
-    <Form source={code} />
+    <Portal source={code} {previous} />
   {/if}
 </section>
 
