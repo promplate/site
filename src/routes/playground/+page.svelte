@@ -36,13 +36,14 @@
 
   function pushLog(item: Item, behind?: Item) {
     if (!log.length)
-      return (log = [item]);
+      return void (log = [item]);
 
     const last = log.at(-1)!;
 
     if (last.type === item.type && (item.type === "out" || (item.type === "in" && item.incomplete))) {
       last.text += item.type === "in" ? `\n${item.text}` : item.text;
       log = [...log];
+      return last;
     }
     else if (behind) {
       const index = log.findIndex(item => item === behind);
@@ -87,8 +88,8 @@
   async function push(source: string) {
     const future: PyAwaitable & { syntax_check: Status; formatted_error: string } = pyConsole.push(source);
 
-    const inputLog: Item = { type: "in", text: source, incomplete: status === "incomplete" };
-    pushLog(inputLog);
+    let inputLog: Item = { type: "in", text: source, incomplete: status === "incomplete" };
+    inputLog = pushLog(inputLog) ?? inputLog;
 
     status = future.syntax_check;
     if (status === "syntax-error") {
@@ -186,8 +187,8 @@
       <div class="text-yellow-2">{text}</div>
     {:else if type === "in"}
       {#if text !== ""}
-        <div class="group flex flex-row [&_.line]:!min-h-1.5em">
-          <div class="min-h-1.4em flex flex-shrink-0 flex-col gap-0.7">
+        <div class="group flex flex-row [&_.line]:(min-h-4 lg:min-h-6 sm:min-h-5)">
+          <div class="min-h-sm:1.2 min-h-lg:1.4 min-h-(1) flex flex-shrink-0 flex-col gap-0.7">
             <ConsolePrompt />
             {#each Array.from({ length: text.match(/\n/g)?.length ?? 0 }) as _}
               <ConsolePrompt prompt="..." />
