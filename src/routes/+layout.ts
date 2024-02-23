@@ -4,5 +4,3 @@ import { dev } from "$app/environment";
 
 inject({ mode: dev ? "development" : "production" });
 injectSpeedInsights();
-
-export const prerender = true;
