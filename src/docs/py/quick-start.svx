@@ -6,6 +6,7 @@ description: Let's begin Prompting in 1 minute
 <script>
 import CodeBlock from "$lib/components/CodeBlock.svelte"
 import Details from "$lib/components/Details.svelte"
+import { h, w } from "$lib/utils/source"
 </script>
 
 ### Installation with `pip install` 
@@ -33,7 +34,7 @@ First, **Open a python REPL** 💻 (`ipython` or `jupyter` are OK. Just any REPL
 
 Then call it like this:
 
-<CodeBlock portal previous={[{id: "chat-complete"}]} code={`
+<CodeBlock portal previous={["chat-complete"]} code={`
 >>> complete("hi", model="gpt-3.5-turbo-0125")
 'Hello! How can I assist you today?'
 `.trim()} />
@@ -46,7 +47,7 @@ Perhaps you don't want to provide `model` parameter everytime you call `complete
 
 Then call it simply with a string:
 
-<CodeBlock portal previous={[{id: "chat-complete", hidden: true}, {id: "chat-complete-binded"}]} code={`
+<CodeBlock portal previous={[h`chat-complete`, "chat-complete-binded"]} code={`
 >>> complete("hi")
 'Hello! How can I assist you today?'
 `.trim()} />
@@ -70,7 +71,7 @@ Simply replace <code>ChatComplete</code> by <code>TextComplete</code>:
 ' just incredibly proud of the team, and their creation of a brand new ship makes'
 `.trim()} />
 And you can pass parameters when calling a <code>Complete</code> instance:
-<CodeBlock portal previous={[{id: "text-complete-binded"}]} code={`
+<CodeBlock portal previous={["text-complete-binded"]} code={`
 >>> complete("1 + 1 = ", temperature=0, max_tokens=1)
 '2'
 `.trim()} />
@@ -106,7 +107,7 @@ In **promplate**, simply use `{{ }}` to insert dynamic data.
 
 You can run the prompt by `complete` we created before
 
-<CodeBlock portal previous={[{id: "chat-complete", hidden: true}, {id: "chat-complete-binded", wait: true}, {id: "greet-template", wait: true}]} code={`
+<CodeBlock portal previous={[h`chat-complete`, "chat-complete-binded", w`greet-template`]} code={`
 >>> complete(_)
 'Good morning!'
 `.trim()} />
@@ -136,7 +137,7 @@ Sometimes we don't use a single prompt to complete. Here are some reasons:
 
 In `prompate`, We use a `Node` to represent a single "task". You can initialize a `Task` with a string like initiating a `Template`:
 
-<CodeBlock id="greet-node" portal previous={[{id: "greet-template", hidden: true}]} code={`
+<CodeBlock id="greet-node" portal previous={[h`greet-template`]} code={`
 >>> from promplate import Node
 >>> greet = Node("Greet me. It is {{ time.asctime() }} now.", locals())
 >>> greet.render()
@@ -154,7 +155,7 @@ Such as, you can **add two nodes together** magically:
 
 And then invoke the chain:
 
-<CodeBlock portal previous={[{id: "chat-complete", hidden: true}, {id: "chat-complete-binded", hidden: true}, {id: "greet-template", hidden: true}, {id: "greet-node", hidden: true}, {"id": "chain"}]} code={`
+<CodeBlock portal previous={[h`chat-complete`, h`chat-complete-binded`, h`greet-template`, h`greet-node`, w`chain`]} code={`
 >>> chain.invoke({"target_language": "zh_CN"}, complete)
 >>> _.result
 '早上好！'
@@ -197,7 +198,7 @@ In `promplate`, you can register a callback everytime before or after a node run
 
 Besides manually implementing the `Callback` interface, you can directly use decorators syntax like so:
 
-<CodeBlock portal previous={[{id: "chat-complete", hidden: true}, {id: "chat-complete-binded", hidden: true}, {id: "greet-template", hidden: true}, {id: "greet-node", hidden: true}, {id: "chain"}]} code={`
+<CodeBlock portal previous={[h`chat-complete`, h`chat-complete-binded`, h`greet-template`, h`greet-node`, w`chain`]} code={`
 >>> @greet.end_process
 ... @translate.end_process
 ... def log_greet_result(context):

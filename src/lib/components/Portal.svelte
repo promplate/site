@@ -1,7 +1,7 @@
 <script lang="ts">
   import { goto, preloadData } from "$app/navigation";
   import { getPy } from "$lib/pyodide";
-  import { type Source, type SourceRef, loadSource } from "$lib/utils/source";
+  import { type SourceRef, refToSource } from "$lib/utils/source";
 
   export let source: string;
   export let previous: SourceRef[] = [];
@@ -17,7 +17,7 @@
   let focused = false;
 
   async function jump() {
-    const sources: Source[] = [...previous.map(({ id, hidden, wait }) => ({ source: loadSource(id), hidden, wait })), { source, wait: true }];
+    const sources = [...previous.map(refToSource), { source, wait: true }];
     goto(url, { state: { sources } });
   }
 </script>
