@@ -147,9 +147,14 @@ But **there are far more utilities**.
 
 Such as, you can **add two nodes together** magically:
 
-<CodeBlock id="chain" portal previous={[{id: "chat-complete", hidden: true}, {id: "chat-complete-binded", hidden: true}, {id: "greet-template", hidden: true}, {id: "greet-node", hidden: true}]} code={`
+<CodeBlock id="chain" code={`
 >>> translate = Node('translate """{{ __result__ }}""" into {{ target_language }}')
 >>> chain = greet + translate  # this represents the pipeline of "greeting in another language"
+`.trim()} />
+
+And then invoke the chain:
+
+<CodeBlock portal previous={[{id: "chat-complete", hidden: true}, {id: "chat-complete-binded", hidden: true}, {id: "greet-template", hidden: true}, {id: "greet-node", hidden: true}, {"id": "chain"}]} code={`
 >>> chain.invoke({"target_language": "zh_CN"}, complete)
 >>> _.result
 '早上好！'
@@ -192,16 +197,15 @@ In `promplate`, you can register a callback everytime before or after a node run
 
 Besides manually implementing the `Callback` interface, you can directly use decorators syntax like so:
 
-<CodeBlock portal previous={[{id: "chat-complete", hidden: true}, {id: "chat-complete-binded", hidden: true}, {id: "greet-template", hidden: true}, {id: "greet-node", hidden: true}, {id: "chain", wait: true}]} code={`
+<CodeBlock portal previous={[{id: "chat-complete", hidden: true}, {id: "chat-complete-binded", hidden: true}, {id: "greet-template", hidden: true}, {id: "greet-node", hidden: true}, {id: "chain"}]} code={`
 >>> @greet.end_process
 ... @translate.end_process
 ... def log_greet_result(context):
 ...     print(context.result)
 ...
->>> context = chain.invoke({"target_language": "zh_CN"}, complete)
+>>> chain.invoke({"target_language": "zh_CN"}, complete)
 Good morning!
 早上好！
->>> context
 ChainContext({'target_language': 'zh_CN', '__result__': '早上好！'})
 `.trim()} />
 

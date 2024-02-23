@@ -47,8 +47,10 @@
       return last;
     }
     else if (behind) {
-      const index = log.findIndex(item => item === behind);
-      log = [...log.slice(0, index), behind, item, ...log.slice(index + 1)];
+      let index = log.findIndex(item => item === behind);
+      if (log[index + 1]?.type === "out")
+        index++;
+      log = [...log.slice(0, index + 1), item, ...log.slice(index + 1)];
     }
     else {
       log = [...log, item];
