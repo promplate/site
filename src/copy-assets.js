@@ -27,15 +27,15 @@ async function preparePackages(names) {
   for (const url of lock.matchAll(/"[^"\s]+\.whl"/g)) {
     const slug = url[0].slice(1, -1);
 
-    if (names.includes(slug))
+    if (names.some(name => slug.includes(name)))
       promises.push(downloadPackage(slug));
   }
 
   await Promise.all(promises);
 }
 
-if (process.env.NODE_ENV === "development" || !process.env.PUBLIC_PYODIDE_INDEX_URL)
-  await preparePackages(["micropip", "packaging", "typing-extensions"]);
+if (process.env.NODE_ENV !== "production" || !process.env.PUBLIC_PYODIDE_INDEX_URL)
+  await preparePackages(["micropip", "packaging", "typing_extensions"]);
 
 if (!fs.existsSync(targetDir)) {
   fs.rmSync(targetDir, { force: true });
