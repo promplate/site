@@ -41,8 +41,8 @@ pip install promplate[openai] -i https://pypi.tuna.tsinghua.edu.cn/simple
 然后像这样调用：
 
 <CodeBlock portal previous={["chat-complete"]} code={`
->>> complete("hi", model="gpt-3.5-turbo-0125")
-'Hello! How can I assist you today?'
+>>> complete("你好", model="gpt-3.5-turbo-0125")
+'你好！有什么可以帮助你的吗？'
 `.trim()} />
 
 你可能懒得每次调用 `complete` 的时候都要填写 `model` 参数，那你可以把参数绑定到 `complete` 上面：
@@ -54,8 +54,8 @@ pip install promplate[openai] -i https://pypi.tuna.tsinghua.edu.cn/simple
 然后只需用一个字符串来调用它：
 
 <CodeBlock portal previous={[h`chat-complete`, "chat-complete-binded"]} code={`
->>> complete("hi")
-'Hello! How can I assist you today?'
+>>> complete("你是谁")
+'我是一位聊天机器人，可以回答你的问题和进行对话。有什么可以帮助你的吗？'
 `.trim()} />
 
 <Details summary="😭😭 如果你没有 API Key">
@@ -63,8 +63,8 @@ pip install promplate[openai] -i https://pypi.tuna.tsinghua.edu.cn/simple
 <CodeBlock portal code={`
 >>> from promplate.llm.openai import ChatComplete
 >>> complete = ChatComplete(base_url="https://promplate.dev", api_key="").bind(model="gpt-3.5-turbo-0125")
->>> complete("hi")
-'Hello! How can I assist you today?'
+>>> complete("随便说点什么")
+'今天的天气真是美好，阳光明媚，让人心情也变得愉快起来。希望每个人都能在这样的日子里感受到幸福和快乐。无论遇到什么困难和挑战，都要坚持积极向前，相信明天会更好。愿大家都拥有一个美好的一天！'
 `.trim()} />
 </Details>
 
@@ -73,8 +73,8 @@ pip install promplate[openai] -i https://pypi.tuna.tsinghua.edu.cn/simple
 <CodeBlock portal id="text-complete-binded" code={`
 >>> from promplate.llm.openai import TextComplete
 >>> complete = TextComplete(api_key="...").bind(model="gpt-3.5-turbo-instruct")
->>> complete("I am")
-' just incredibly proud of the team, and their creation of a brand new ship makes'
+>>> complete("我是")
+'人也像你\\n缘起在那个年代，'
 `.trim()} />
 当调用 <code>Complete</code> 实例时，你可以传递参数，比如 temperature，也可以在初始化时修改参数：
 <CodeBlock portal previous={["text-complete-binded"]} code={`
@@ -84,17 +84,14 @@ pip install promplate[openai] -i https://pypi.tuna.tsinghua.edu.cn/simple
 </Details>
 
 <Details summary="想迭代流式响应也很简单 👀">
-这仍然非常简单，只需使用 <code>ChatGenerate</code>：
+只需使用 <code>ChatGenerate</code>，然后用 for 循环去迭代它：
 <CodeBlock portal code={`
 >>> from promplate.llm.openai import ChatGenerate
 >>> generate = ChatGenerate(api_key="...").bind(model="gpt-3.5-turbo-0125")
->>> for i in generate("Explain why 1 + 1 = 2"):
+>>> for i in generate("为什么 1 + 1 = 2"):
 ...     print(i, end="", flush=True)  # 这会逐渐打印生成的token
 ...
-The equation 1 + 1 = 2 is a fundamental principle in mathematics and arithmetic. It represents the addition operation, which involves combining two quantities or numbers to find their sum.\n
-In this case, when we add 1 to another 1, we are essentially combining or merging two individual units or quantities. By doing this, we end up with a total count of two. Therefore, the result is 2.\n
-This principle is consistent and holds true in all contexts and across different number systems, whether it is in the base-10 decimal system, binary system, or any other number system.\n
-1 + 1 = 2 is considered a basic and universally accepted mathematical fact, forming the foundation for more complex mathematical operations and calculations.\n
+1 + 1 = 2 是数学中的基本原理，这个等式符合加法运算规则。当我们将一个物体与另一个相同的物体放在一起时，我们就会有两个物体。所以，1个物体加上另一个物体等于2个物体。这是数学中的基本概念之一。
 `.trim()} />
 </Details>
 
@@ -106,16 +103,16 @@ This principle is consistent and holds true in all contexts and across different
 <CodeBlock portal id="greet-template" code={`
 >>> import time
 >>> from promplate import Template
->>> greet = Template("Greet me. It is {{ time.asctime() }} now.")
+>>> greet = Template("结合当前时间向我请安。现在是 {{ time.asctime() }}")
 >>> greet.render(locals())
-'Greet me. It is Sun Oct  1 03:56:02 2023 now.'
+'结合当前时间向我请安。现在是 Sat Feb 24 19:57:36 2024'
 `.trim()} />
 
 借助刚刚创建的 `complete` 对象来执行它：
 
 <CodeBlock portal previous={[h`chat-complete`, "chat-complete-binded", w`greet-template`]} code={`
 >>> complete(_)  # _ 在 REPL 中就是上一个表达式的值
-'Good morning!'
+'您好！现在是2024年2月24日周六晚上7点58分50秒，祝您身体健康，心情愉快！有什么可以帮助您的吗？祝您一切顺利！'
 `.trim()} />
 
 可以看到，它根据我们的当前时间给出了合适的问候语。
@@ -137,9 +134,9 @@ This principle is consistent and holds true in all contexts and across different
 
 <CodeBlock id="greet-node" portal previous={[h`greet-template`]} code={`
 >>> from promplate import Node
->>> greet = Node("Greet me. It is {{ time.asctime() }} now.", locals())
+>>> greet = Node("{{ time.asctime() }} 是上午还是下午？请用英文回答。", locals())
 >>> greet.render()  # 你已经在这个 Node 初始化时传递了上下文
-'Greet me. It is Sun Oct  1 04:16:04 2023 now.'
+'Sat Feb 24 19:59:41 2024 是上午还是下午？请用英文回答。'
 `.trim()} />
 
 一个 `Node` 就是一个加了**许多实用功能**的 `Template` ：
@@ -147,7 +144,7 @@ This principle is consistent and holds true in all contexts and across different
 像魔法一样，你可以直接**将两个节点相加**，表示先后连接的顺序：
 
 <CodeBlock id="chain" code={`
->>> translate = Node('translate """{{ __result__ }}""" into {{ target_language }}')
+>>> translate = Node('将 """{{ __result__ }}""" 翻译成 {{ target_language }}')
 >>> chain = greet + translate  # 这表示了"用中文打招呼"的流程
 `.trim()} />
 
@@ -159,7 +156,7 @@ This principle is consistent and holds true in all contexts and across different
 '早上好！'
 `.trim()} />
 
-<Details summary="Details">
+<Details summary="一些细节">
 
 注意 `.run()` 的返回类型是 `ChainContext`，这是一个 `dict` 的子类，但是比 `dict` 多了一些东西：
 - `__result__` 键在 `.run()` 时被自动分配为上一个 `Node` 的输出，你可以在模板中用 `{{ __result__ }}` 访问它；
@@ -180,7 +177,7 @@ This principle is consistent and holds true in all contexts and across different
 >>> Node("...").invoke().result
 `.trim()} />
 
-这部分可能有点难理解。这是为了这个框架的灵活性。事实上，等你的流水线越来越长了，你会发现这就是最佳实践。
+这部分可能有点难理解。但这些都是为了这个框架的灵活性。其实，等你的工程逐渐变大了，你会发现这种封装就是最佳实践。
 </Details>
 
 ### Agent = LLM + Tools! 给 `Chain` 注册回调！
@@ -203,9 +200,9 @@ This principle is consistent and holds true in all contexts and across different
 ...     print(context.result)
 ...
 >>> chain.invoke({"target_language": "zh_CN"}, complete)
-Good morning!
-早上好！
-ChainContext({'target_language': 'zh_CN', '__result__': '早上好！'})
+It is in the afternoon.
+现在是下午。
+ChainContext({'target_language': 'zh_CN', '__result__': '现在是下午。'})
 `.trim()} />
 
 上面这是一个将第一个 `Node` 的结果 print 出来的回调。事实上，你可以在回调中随意读取和写入 `context`
