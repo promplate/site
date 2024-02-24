@@ -5,3 +5,5 @@ import { redirect } from "@sveltejs/kit";
 export const GET: RequestHandler = async () => {
   redirect(302, "/py");
 };
+
+export const prerender = true;

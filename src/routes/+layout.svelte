@@ -5,6 +5,7 @@
   import { dev } from "$app/environment";
   import { page } from "$app/stores";
   import * as env from "$env/static/public";
+  import { Toaster } from "svelte-sonner";
 
   const headScripts = atob(env.PUBLIC_HEAD_SCRIPTS ?? "");
 
@@ -31,6 +32,8 @@
   <meta property="og:description" content={ogDescription} />
   <meta property="twitter:description" content={ogDescription} />
 </svelte:head>
+
+<Toaster theme="dark" />
 
 <slot />
 

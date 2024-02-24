@@ -1,17 +1,25 @@
 <script lang="ts">
-  import type { PyAwaitable, PyProxy, PythonError } from "pyodide/ffi";
+  import type { ActionData } from "./$types";
+  import type { Source } from "$lib/utils/source";
+  import type { PyAwaitable, PyProxy } from "pyodide/ffi";
   import type { KeyboardEventHandler } from "svelte/elements";
 
+  import { page } from "$app/stores";
   import ConsolePrompt from "$lib/components/ConsolePrompt.svelte";
   import InlineCode from "$lib/components/InlineCode.svelte";
   import { getPy, initConsole } from "$lib/pyodide";
+  import { patchSource, reformatInputSource } from "$lib/pyodide/translate";
   import { onMount } from "svelte";
+
+  export let form: ActionData;
+
+  const { sources } = (form ?? $page.state) as { sources?: Source[] };
 
   type Item = { type: "out" | "err" | "in" | "repr"; text: string; incomplete?: boolean };
 
   type Status = "incomplete" | "syntax-error" | "complete";
 
-  let loading = true;
+  let loading = 1;
 
   let log: Item[] = [];
 
@@ -27,15 +35,35 @@
 
   let status: Status = "complete";
 
-  function pushLog(item: Item) {
+  let focusedError: { traceback: string; code: string };
+
+  function showErrorExplain(index: number) {
+    if (log[index]?.type !== "err")
+      return;
+
+    const traceback = log[index].text;
+
+    const code = log.slice(0, index).map(({ text, type }) => type === "in" ? reformatInputSource(text) : text).join("\n");
+
+    focusedError = { traceback, code };
+  }
+
+  function pushLog(item: Item, behind?: Item) {
     if (!log.length)
-      return (log = [item]);
+      return void (log = [item]);
 
     const last = log.at(-1)!;
 
     if (last.type === item.type && (item.type === "out" || (item.type === "in" && item.incomplete))) {
       last.text += item.type === "in" ? `\n${item.text}` : item.text;
       log = [...log];
+      return last;
+    }
+    else if (behind) {
+      let index = log.findIndex(item => item === behind);
+      if (log[index + 1]?.type === "out")
+        index++;
+      log = [...log.slice(0, index + 1), item, ...log.slice(index + 1)];
     }
     else {
       log = [...log, item];
@@ -55,36 +83,44 @@
     pyConsole.stdout_callback = (text: string) => pushLog({ type: "out", text });
     pyConsole.stderr_callback = (text: string) => pushLog({ type: "err", text });
 
-    loading = false;
+    loading--;
 
-    await push("from promplate import *");
-    await push("from promplate.llm.openai import *");
-    await push("# now all exposed APIs of promplate are available");
+    async function pushMany(lines: string[], wait: boolean, hidden?: boolean) {
+      for (const line of lines) {
+        const promise = hidden ? pyConsole.push(line) : push(line);
+        wait && (await promise);
+      }
+    }
+
+    if (sources?.length)
+      for (const { source, hidden, wait } of sources) await pushMany(patchSource(source).split("\n"), Boolean(wait), hidden);
+    else await pushMany(["from promplate import *", "from promplate.llm.openai import *", "# now all exposed APIs of promplate are available"], true);
   });
 
   async function push(source: string) {
     const future: PyAwaitable & { syntax_check: Status; formatted_error: string } = pyConsole.push(source);
 
-    pushLog({ type: "in", text: source, incomplete: status === "incomplete" });
+    let inputLog: Item = { type: "in", text: source, incomplete: status === "incomplete" };
+    inputLog = pushLog(inputLog) ?? inputLog;
 
     status = future.syntax_check;
     if (status === "syntax-error") {
-      pushLog({ type: "err", text: `Traceback (most recent call last):\n${future.formatted_error}` });
+      pushLog({ type: "err", text: `Traceback (most recent call last):\n${future.formatted_error}` }, inputLog);
     }
     else if (status === "complete") {
-      loading = true;
+      loading++;
       try {
         const [result, repr] = await getWrapped(future);
         if (result != null) {
-          pushLog({ type: "repr", text: repr });
+          pushLog({ type: "repr", text: repr }, inputLog);
           pyConsole.globals.set("_", result);
         }
       }
-      catch (e) {
-        pushLog({ type: "err", text: (e as PythonError).message });
+      catch (_) {
+        pushLog({ type: "err", text: future.formatted_error }, inputLog);
       }
       finally {
-        loading = false;
+        loading--;
       }
     }
   }
@@ -157,30 +193,46 @@
   };
 </script>
 
-<div class="my-8 w-[calc(100vw-4rem)] flex flex-col gap-0.7 overflow-x-scroll whitespace-pre-wrap rounded bg-white/3 p-5 text-neutral-3 font-mono <lg:(my-6 w-[calc(100vw-3rem)] p-4 text-sm) <sm:(my-4 w-[calc(100vw-2rem)] p-3 text-xs) [&>div:hover]:(rounded-sm bg-white/2 px-1.7 py-0.6 -mx-1.7 -my-0.6)">
-  {#each log as { type, text }}
-    {#if type === "out"}
-      <div class="text-yellow-2">{text}</div>
-    {:else if type === "in"}
-      <div class="group flex flex-row">
-        <div class="min-h-1.4em flex flex-shrink-0 flex-col gap-0.7">
-          <ConsolePrompt />
-          {#if text !== "\n"}
-            {#each Array.from({ length: text.match(/\n/g)?.length ?? 0 }) as _}
-              <ConsolePrompt prompt="..." />
-            {/each}
-          {/if}
+<div class="my-4 w-[calc(100vw-2rem)] flex flex-row gap-4 p-3 text-neutral-3 <lg:(my-3 w-[calc(100vw-1.5rem)] gap-3 p-2 text-sm) <sm:(my-2 w-[calc(100vw-1rem)] gap-2 p-1 text-xs) [&>div]:(overflow-x-scroll rounded bg-white/3 p-5 <lg:p-4 <sm:p-3)">
+  <div class="w-full flex flex-col gap-0.7 whitespace-pre-wrap font-mono [&>div:hover]:(rounded-sm bg-white/2 px-1.7 py-0.6 -mx-1.7 -my-0.6)">
+    {#each log as { type, text }, index}
+      {#if type === "out"}
+        <div class="text-yellow-2">{text}</div>
+      {:else if type === "in"}
+        {#if text !== ""}
+          <div class="group flex flex-row [&_.line]:(min-h-4 lg:min-h-6 sm:min-h-5)">
+            <div class="min-h-1 flex flex-shrink-0 flex-col gap-0.7 lg:min-h-1.4 sm:min-h-1.2">
+              <ConsolePrompt />
+              {#each Array.from({ length: text.match(/\n/g)?.length ?? 0 }) as _}
+                <ConsolePrompt prompt="..." />
+              {/each}
+            </div>
+            <InlineCode {text}></InlineCode>
+          </div>
+        {:else}
+          <section class="animate-(fade-out duration-300 both)">
+            <ConsolePrompt />
+          </section>
+        {/if}
+      {:else if type === "err"}
+        <div class="group relative whitespace-normal">
+          <div class="whitespace-pre-wrap text-red-4">{text}</div>
+          <button on:click={() => showErrorExplain(index)} class="i-majesticons-lightbulb-shine absolute right-0.7em top-0.7em text-1.3em op-0 active:scale-90 group-hover:(op-100 transition-opacity)" />
         </div>
-        <InlineCode {text}></InlineCode>
-      </div>
-    {:else if type === "err"}
-      <div class="text-red-4">{text}</div>
-    {:else if type === "repr"}
-      <div class="text-cyan-2">{text}</div>
-    {/if}
-  {/each}
-  <div class="group flex flex-row" class:animate-pulse={loading}>
-    <ConsolePrompt prompt={status === "incomplete" ? "..." : ">>>"} />
-    <input bind:this={inputRef} class="h-none m-0 w-full rounded bg-transparent p-0 outline-none" bind:value={input} type="text" on:keydown={onKeyDown} />
+      {:else if type === "repr"}
+        <div class="text-cyan-2">{text}</div>
+      {/if}
+    {/each}
+    <div class="group flex flex-row" class:animate-pulse={loading}>
+      <ConsolePrompt prompt={status === "incomplete" ? "..." : ">>>"} />
+      <!-- svelte-ignore a11y-autofocus -->
+      <input autofocus bind:this={inputRef} class="w-full bg-transparent outline-none" bind:value={input} type="text" on:keydown={onKeyDown} />
+    </div>
   </div>
+  {#if focusedError}
+    {#await import("$lib/components/ErrorExplainModal.svelte") then { default: ErrorExplainModal }}
+      {@const { traceback, code } = focusedError }
+      <svelte:component this={ErrorExplainModal} {traceback} {code} />
+    {/await}
+  {/if}
 </div>

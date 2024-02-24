@@ -1,28 +1,37 @@
-import initConsoleCode from "./console.py?raw";
-import initCode from "./init.py?raw";
-import { AsyncClient } from "./translate";
 import * as env from "$env/static/public";
-import { type PyodideInterface, loadPyodide } from "pyodide";
-import { version } from "pyodide/package.json";
+import { cacheSingleton } from "$lib/utils/cache";
+import { withToast } from "$lib/utils/toast";
+import { toast } from "svelte-sonner";
 
-let py: PyodideInterface;
+const indexURL = typeof window === "undefined" ? undefined : (process.env.NODE_ENV === "production" && env.PUBLIC_PYODIDE_INDEX_URL) || "/pyodide/";
 
-export async function getPy() {
-  if (typeof py !== "undefined")
-    return py;
+async function initPyodide() {
+  const { loadPyodide } = await import("pyodide");
+  return await loadPyodide({ indexURL, env: { ...env }, packages: ["micropip", "typing-extensions"] });
+}
 
-  // const indexURL = typeof window === "undefined" ? undefined : (process.env.NODE_ENV === "production" && env.PUBLIC_PYODIDE_INDEX_URL) || "/pyodide/";
-  const indexURL = `https://cdn.jsdelivr.net/pyodide/v${version}/full/`;
+async function initPy() {
+  const [py, { AsyncClient }, version, { default: initCode }] = await Promise.all([
+    initPyodide(),
+    import("./translate"),
+    import("openai/version"),
+    import("./init.py?raw"),
+  ]);
+  const info = toast.loading("installing extra python dependencies");
 
-  py = await loadPyodide({ indexURL, env: { ...env } });
-  await py.loadPackage("micropip");
-  py.registerJsModule("openai", { AsyncClient, Client: () => null, version: await import("openai/version"), __all__: [] });
+  py.registerJsModule("openai", { AsyncClient, Client: () => null, version, __all__: [] });
   py.registerJsModule("httpx", { AsyncClient: () => null, Client: () => null });
+
   await py.runPythonAsync(initCode);
+
+  toast.dismiss(info);
+
   return py;
 }
 
+export const getPy = cacheSingleton(withToast(initPy, { loading: "preparing pyodide runtime", success: `successfully initialized pyodide runtime` }));
+
 export async function initConsole() {
-  const py = await getPy();
+  const [py, { default: initConsoleCode }] = await Promise.all([getPy(), import("./console.py?raw")]);
   await py.runPythonAsync(initConsoleCode);
 }

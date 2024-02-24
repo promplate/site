@@ -14,3 +14,16 @@ export function cacheGlobally<T extends () => unknown>(key: string, target: T): 
     return target();
   }) as T;
 }
+
+export function cacheSingleton<T extends () => any>(target: T): T {
+  const UNSET = {};
+  let result: any = UNSET;
+
+  return (() => {
+    if (result !== UNSET)
+      return result;
+
+    result = target();
+    return result;
+  }) as T;
+}

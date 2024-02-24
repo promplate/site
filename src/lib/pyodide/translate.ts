@@ -1,6 +1,7 @@
 import type * as Core from "openai/core";
 import type { PyProxy } from "pyodide/ffi";
 
+import { env } from "$env/dynamic/public";
 import { type ClientOptions, OpenAI } from "openai";
 
 interface PyClientOptions {
@@ -35,8 +36,8 @@ export async function toPyOptions(options: ClientOptions) {
 
 export function toJsOptions(options: PyClientOptions) {
   return {
-    baseURL: options.base_url,
-    apiKey: options.api_key,
+    baseURL: options.base_url ?? env.PUBLIC_OPENAI_API_BASE,
+    apiKey: options.api_key ?? env.PUBLIC_OPENAI_API_KEY ?? "",
     organization: options.organization,
     timeout: options.timeout,
     maxRetries: options.max_retries,
@@ -48,4 +49,26 @@ export function toJsOptions(options: PyClientOptions) {
 
 export function AsyncClient(options: PyClientOptions) {
   return new OpenAI(toJsOptions(options));
+}
+
+export function toAsync(source: string) {
+  return source
+    .replaceAll(/(\S+|\(.*\))\.invoke/g, "await $1.ainvoke")
+    .replaceAll("ChatComplete", "AsyncChatComplete")
+    .replaceAll("complete(", "await complete(")
+    .replaceAll(/for (\w+) in generate/g, "async for $1 in generate");
+}
+
+export function patchSource(source: string) {
+  const shouldStrip = source.includes(">>> ");
+
+  return (
+    shouldStrip
+      ? source.split("\n").filter(line => line.startsWith(">>>") || line.startsWith("...")).map(line => toAsync(line.slice(4)))
+      : source.split("\n").map(toAsync)
+  ).join("\n");
+}
+
+export function reformatInputSource(source: string) {
+  return source.split("\n").map((value, index) => (index ? "... " : ">>> ") + value).join("\n");
 }

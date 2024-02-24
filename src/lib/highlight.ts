@@ -1,15 +1,15 @@
-import type { ShikijiTransformer } from "shikiji";
+import type { ShikiTransformer } from "shiki";
 
 import { cacheGlobally } from "./utils/cache";
 
 export async function getHighlighter(lang: string) {
-  return await cacheGlobally(`shikiji-${lang}`, async () => {
-    const { getHighlighter } = await import("shikiji");
+  return await cacheGlobally(`shiki-${lang}`, async () => {
+    const { getHighlighter } = await import("shiki");
     return await getHighlighter({ themes: ["vitesse-dark"], langs: [lang] });
   })();
 }
 
-const transformers: ShikijiTransformer[] = [
+const transformers: ShikiTransformer[] = [
   { pre: (node) => { node.properties.tabindex = "-1"; } },
 ];
 

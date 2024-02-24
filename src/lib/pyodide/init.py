@@ -4,7 +4,6 @@ from micropip import install
 
 await install(
     [
-        "typing-extensions>=4,<5",
         "promplate==0.3.3.4",
         "promplate-pyodide==0.0.1",
     ]

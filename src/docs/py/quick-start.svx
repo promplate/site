@@ -6,21 +6,22 @@ description: 一分钟速成提示工程！
 <script>
 import CodeBlock from "$lib/components/CodeBlock.svelte"
 import Details from "$lib/components/Details.svelte"
+import { h, w } from "$lib/utils/source"
 </script>
 
 ### 直接 `pip install` 安装 🌟
 
 从 [PyPI](https://pypi.org/project/promplate/) 安装：
 
-```
+<CodeBlock lang="shell" code={`
 pip install promplate[openai]
-```
+`.trim()} />
 
 你也可以用任何你喜欢的源（比如以清华源为例）：
 
-```
+<CodeBlock lang="shell" code={`
 pip install promplate[openai] -i https://pypi.tuna.tsinghua.edu.cn/simple
-```
+`.trim()} />
 
 我们只是用 `OpenAI` 来做演示。实际上，**你可以使用任何你想要的LLM**。
 
@@ -30,7 +31,7 @@ pip install promplate[openai] -i https://pypi.tuna.tsinghua.edu.cn/simple
 
 **下面的所有代码都可以直接运行**，只要你是一行行复制粘贴过去的，都可以正常得出结果。
 
-<CodeBlock code={`
+<CodeBlock id="chat-complete" code={`
 >>> from promplate.llm.openai import ChatComplete  # 这个类只是对OpenAI的官方SDK的封装而已
 >>> complete = ChatComplete(api_key="...")
 `.trim()} />
@@ -39,27 +40,27 @@ pip install promplate[openai] -i https://pypi.tuna.tsinghua.edu.cn/simple
 
 然后像这样调用：
 
-<CodeBlock code={`
+<CodeBlock portal previous={["chat-complete"]} code={`
 >>> complete("hi", model="gpt-3.5-turbo-0125")
 'Hello! How can I assist you today?'
 `.trim()} />
 
 你可能懒得每次调用 `complete` 的时候都要填写 `model` 参数，那你可以把参数绑定到 `complete` 上面：
 
-<CodeBlock code={`
+<CodeBlock id="chat-complete-binded" code={`
 >>> complete = ChatComplete(api_key="...").bind(model="gpt-3.5-turbo-0125")
 `.trim()} />
 
 然后只需用一个字符串来调用它：
 
-<CodeBlock code={`
->>> complete("hi", model="gpt-3.5-turbo-0125")
+<CodeBlock portal previous={[h`chat-complete`, "chat-complete-binded"]} code={`
+>>> complete("hi")
 'Hello! How can I assist you today?'
 `.trim()} />
 
 <Details summary="😭😭 如果你没有 API Key">
 我有个教育目的的免费代理站，你不用 API Key 也能免费使用。像这样填写 <code>base_url</code> 字段即可：
-<CodeBlock code={`
+<CodeBlock portal code={`
 >>> from promplate.llm.openai import ChatComplete
 >>> complete = ChatComplete(base_url="https://promplate.dev", api_key="").bind(model="gpt-3.5-turbo-0125")
 >>> complete("hi")
@@ -69,14 +70,14 @@ pip install promplate[openai] -i https://pypi.tuna.tsinghua.edu.cn/simple
 
 <Details summary="如果你想使用 instruct 模型 🤔">
 只需简单地将 <code>ChatComplete</code> 替换为 <code>TextComplete</code>：
-<CodeBlock code={`
+<CodeBlock portal id="text-complete-binded" code={`
 >>> from promplate.llm.openai import TextComplete
 >>> complete = TextComplete(api_key="...").bind(model="gpt-3.5-turbo-instruct")
 >>> complete("I am")
 ' just incredibly proud of the team, and their creation of a brand new ship makes'
 `.trim()} />
 当调用 <code>Complete</code> 实例时，你可以传递参数，比如 temperature，也可以在初始化时修改参数：
-<CodeBlock code={`
+<CodeBlock portal previous={["text-complete-binded"]} code={`
 >>> complete("1 + 1 = ", temperature=0, max_tokens=1)
 '2'
 `.trim()} />
@@ -84,7 +85,7 @@ pip install promplate[openai] -i https://pypi.tuna.tsinghua.edu.cn/simple
 
 <Details summary="想迭代流式响应也很简单 👀">
 这仍然非常简单，只需使用 <code>ChatGenerate</code>：
-<CodeBlock code={`
+<CodeBlock portal code={`
 >>> from promplate.llm.openai import ChatGenerate
 >>> generate = ChatGenerate(api_key="...").bind(model="gpt-3.5-turbo-0125")
 >>> for i in generate("Explain why 1 + 1 = 2"):
@@ -102,7 +103,7 @@ This principle is consistent and holds true in all contexts and across different
 在你的提示中必然有一些动态的内容，比如**用户输入的问题**，**从数据库中检索到的数据**，**网上搜索的结果**等。
 在 **promplate** 中，只需使用 `{{ }}` 就可以插入动态数据。
 
-<CodeBlock code={`
+<CodeBlock portal id="greet-template" code={`
 >>> import time
 >>> from promplate import Template
 >>> greet = Template("Greet me. It is {{ time.asctime() }} now.")
@@ -112,7 +113,7 @@ This principle is consistent and holds true in all contexts and across different
 
 借助刚刚创建的 `complete` 对象来执行它：
 
-<CodeBlock code={`
+<CodeBlock portal previous={[h`chat-complete`, "chat-complete-binded", w`greet-template`]} code={`
 >>> complete(_)  # _ 在 REPL 中就是上一个表达式的值
 'Good morning!'
 `.trim()} />
@@ -134,36 +135,34 @@ This principle is consistent and holds true in all contexts and across different
 
 在 `prompate` 中，我们使用 `Node` 来表示一个单一的"任务"。你可以用一个字符串来初始化一个"任务"：
 
-<CodeBlock code={`
+<CodeBlock id="greet-node" portal previous={[h`greet-template`]} code={`
 >>> from promplate import Node
 >>> greet = Node("Greet me. It is {{ time.asctime() }} now.", locals())
->>> greet.render()
+>>> greet.render()  # 你已经在这个 Node 初始化时传递了上下文
 'Greet me. It is Sun Oct  1 04:16:04 2023 now.'
 `.trim()} />
 
 一个 `Node` 就是一个加了**许多实用功能**的 `Template` ：
 
-<CodeBlock code={`
->>> greet = Node("Greet me. It is {{ time.asctime() }} now.", locals())
->>> greet.render()  # 你已经在这个 Node 初始化时传递了上下文
-'Greet me. It is Sun Oct  1 04:16:54 2023 now.'
-`.trim()} />
-
 像魔法一样，你可以直接**将两个节点相加**，表示先后连接的顺序：
 
-<CodeBlock code={`
+<CodeBlock id="chain" code={`
 >>> translate = Node('translate """{{ __result__ }}""" into {{ target_language }}')
 >>> chain = greet + translate  # 这表示了"用中文打招呼"的流程
->>> chain.invoke({"target_language": "zh_CN"}, complete).result
+`.trim()} />
+
+然后像这样调用：
+
+<CodeBlock portal previous={[h`chat-complete`, h`chat-complete-binded`, h`greet-template`, h`greet-node`, w`chain`]} code={`
+>>> chain.invoke({"target_language": "zh_CN"}, complete)
+>>> _.result
 '早上好！'
 `.trim()} />
 
 <Details summary="Details">
 
 注意 `.run()` 的返回类型是 `ChainContext`，这是一个 `dict` 的子类，但是比 `dict` 多了一些东西：
-
 - `__result__` 键在 `.run()` 时被自动分配为上一个 `Node` 的输出，你可以在模板中用 `{{ __result__ }}` 访问它；
-
 - 在模板外部，你可以使用 `ChainContext` 的 `.result` 来获取最后的输出。
 
 以下三个表达式应该返回相同的字符串：
@@ -197,16 +196,16 @@ This principle is consistent and holds true in all contexts and across different
 
 除了手动实现 `Callback` 接口，你可以直接用装饰器语法来注册回调：
 
-<CodeBlock code={`
+<CodeBlock portal previous={[h`chat-complete`, h`chat-complete-binded`, h`greet-template`, h`greet-node`, w`chain`]} code={`
 >>> @greet.end_process
+... @translate.end_process
 ... def log_greet_result(context):
 ...     print(context.result)
-...     print(context["target_language"])
 ...
->>> chain.invoke({"target_language": "zh_CN"}, complete).result
+>>> chain.invoke({"target_language": "zh_CN"}, complete)
 Good morning!
-zh_CN
-'早上好！'
+早上好！
+ChainContext({'target_language': 'zh_CN', '__result__': '早上好！'})
 `.trim()} />
 
 上面这是一个将第一个 `Node` 的结果 print 出来的回调。事实上，你可以在回调中随意读取和写入 `context`

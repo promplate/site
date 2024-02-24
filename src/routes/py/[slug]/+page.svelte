@@ -17,7 +17,7 @@
     <h1 class="text-4xl font-light">{meta.title}</h1>
     <p class="rounded-md bg-white/5 px-3 py-2 font-serif">{meta.description}</p>
   </hgroup>
-  <main class="max-w-full prose [&>details_pre]:m-0 [&>details_*]:my-3 [&>pre]:(b-1 b-white/10 bg-#121212) [&_blockquote]:(b-l-4 b-white/50 p-0 not-oblique) [&>details]:(p-0 text-white/80) [&_pre>code]:text-white/80 [&_strong,&_a,&_code,&_summary]:(text-white font-normal) [&>p]:text-white/80 [&_[id]>a]:no-underline">
+  <main class="max-w-full prose [&>details_pre]:m-0 [&>details>*]:my-3 [&>hr]:(mx-1/4 h-0.4 rounded-full bg-white/10) [&>pre]:(b-1 b-white/10 bg-#121212) [&_blockquote]:(b-l-4 b-white/50 p-0 not-oblique) [&>details]:(p-0 text-white/80) [&_pre>code]:text-white/80 [&_strong,&_a,&_code,&_summary]:(text-white font-normal) [&>p]:text-white/80 [&_[id]>a]:no-underline">
     <svelte:component this={data.content} />
   </main>
 </article>
