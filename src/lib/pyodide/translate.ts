@@ -68,3 +68,7 @@ export function patchSource(source: string) {
       : source.split("\n").map(toAsync)
   ).join("\n");
 }
+
+export function reformatInputSource(source: string) {
+  return source.split("\n").map((value, index) => (index ? "... " : ">>> ") + value).join("\n");
+}

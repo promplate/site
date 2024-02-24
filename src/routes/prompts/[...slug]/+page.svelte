@@ -1,12 +1,15 @@
 <script lang="ts">
   import type { PageData } from "./$types";
   import type { PyodideInterface } from "pyodide";
+  import type { PythonError } from "pyodide/ffi";
 
+  import makeContext from "$lib/../templates";
   import CodeBlock from "$lib/components/CodeBlock.svelte";
   import Editor from "$lib/components/Editor.svelte";
   import _script from "$lib/examples/template.py?raw";
   import { getPy } from "$lib/pyodide";
   import { onMount } from "svelte";
+  import { toast } from "svelte-sonner";
   import { scale } from "svelte/transition";
 
   export let data: PageData;
@@ -18,7 +21,12 @@
   let loading = false;
   let py: PyodideInterface;
 
-  $: py && py.globals.set("prompt", prompt);
+  async function refreshContext(prompt: string) {
+    py.globals.set("prompt", prompt);
+    py.globals.set("context", py.toPy(await makeContext()));
+  }
+
+  $: py && refreshContext(prompt);
 
   onMount(async () => {
     py = await getPy();
@@ -32,15 +40,22 @@
       },
     });
 
-    prompt && await reRun();
+    prompt && (await reRun());
   });
 
   async function reRun() {
     output = "";
     if (!loading) {
       loading = true;
-      await py.runPythonAsync(script);
-      loading = false;
+      try {
+        await py.runPythonAsync(script);
+      }
+      catch (e) {
+        toast.error((e as PythonError).message);
+      }
+      finally {
+        loading = false;
+      }
     }
   }
 </script>
@@ -56,7 +71,7 @@
       {/if}
     </button>
   </div>
-  <div class="h-[calc(100vh-10rem)] w-1/2 flex flex-col gap-7 [&>div]:h-full [&>section]:h-3/2 [&>section_*]:!whitespace-pre-line">
+  <div class="h-[calc(100vh-10rem)] w-1/2 flex flex-col gap-7 [&>div]:h-1/2 [&>section]:h-full [&>section>*]:!whitespace-pre-wrap">
     <Editor bind:source={script} />
     <CodeBlock code={output} collapse lang="markdown" />
   </div>
