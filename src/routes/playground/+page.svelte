@@ -5,8 +5,8 @@
   import type { KeyboardEventHandler } from "svelte/elements";
 
   import { page } from "$app/stores";
+  import { Err, In, Out, Repr } from "$lib/components/console";
   import ConsolePrompt from "$lib/components/ConsolePrompt.svelte";
-  import InlineCode from "$lib/components/InlineCode.svelte";
   import { getPy, initConsole } from "$lib/pyodide";
   import { patchSource, reformatInputSource } from "$lib/pyodide/translate";
   import { onMount } from "svelte";
@@ -197,30 +197,13 @@
   <div class="w-full flex flex-col gap-0.7 whitespace-pre-wrap font-mono [&>div:hover]:(rounded-sm bg-white/2 px-1.7 py-0.6 -mx-1.7 -my-0.6)">
     {#each log as { type, text }, index}
       {#if type === "out"}
-        <div class="text-yellow-2">{text}</div>
+        <Out {text} />
       {:else if type === "in"}
-        {#if text !== ""}
-          <div class="group flex flex-row [&_.line]:(min-h-4 lg:min-h-6 sm:min-h-5)">
-            <div class="min-h-1 flex flex-shrink-0 flex-col gap-0.7 lg:min-h-1.4 sm:min-h-1.2">
-              <ConsolePrompt />
-              {#each Array.from({ length: text.match(/\n/g)?.length ?? 0 }) as _}
-                <ConsolePrompt prompt="..." />
-              {/each}
-            </div>
-            <InlineCode {text}></InlineCode>
-          </div>
-        {:else}
-          <section class="animate-(fade-out duration-300 both)">
-            <ConsolePrompt />
-          </section>
-        {/if}
+        <In {text} on:click={() => push(text)} />
       {:else if type === "err"}
-        <div class="group relative whitespace-normal">
-          <div class="whitespace-pre-wrap text-red-4">{text}</div>
-          <button on:click={() => showErrorExplain(index)} class="i-majesticons-lightbulb-shine absolute right-0.7em top-0.7em text-1.3em op-0 active:scale-90 group-hover:(op-100 transition-opacity)" />
-        </div>
+        <Err {text} on:click={() => showErrorExplain(index)} />
       {:else if type === "repr"}
-        <div class="text-cyan-2">{text}</div>
+        <Repr {text} />
       {/if}
     {/each}
     <div class="group flex flex-row" class:animate-pulse={loading}>
@@ -231,7 +214,7 @@
   </div>
   {#if focusedError}
     {#await import("$lib/components/ErrorExplainModal.svelte") then { default: ErrorExplainModal }}
-      {@const { traceback, code } = focusedError }
+      {@const { traceback, code } = focusedError}
       <svelte:component this={ErrorExplainModal} {traceback} {code} />
     {/await}
   {/if}
