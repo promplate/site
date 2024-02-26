@@ -1,7 +1,7 @@
 <script lang="ts">
   import type { ActionData } from "./$types";
   import type { Source } from "$lib/utils/source";
-  import type { PyAwaitable, PyProxy } from "pyodide/ffi";
+  import type { PyAwaitable, PyProxy, PythonError } from "pyodide/ffi";
   import type { KeyboardEventHandler } from "svelte/elements";
 
   import { page } from "$app/stores";
@@ -106,6 +106,8 @@
     status = future.syntax_check;
     if (status === "syntax-error") {
       pushLog({ type: "err", text: `Traceback (most recent call last):\n${future.formatted_error}` }, inputLog);
+      future.exception(); // to prevent an annoying warning
+      future.destroy();
     }
     else if (status === "complete") {
       loading++;
@@ -116,11 +118,12 @@
           pyConsole.globals.set("_", result);
         }
       }
-      catch (_) {
-        pushLog({ type: "err", text: future.formatted_error }, inputLog);
+      catch (e) {
+        pushLog({ type: "err", text: future.formatted_error ?? (e as PythonError).message }, inputLog);
       }
       finally {
         loading--;
+        future.destroy();
       }
     }
   }
