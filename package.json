@@ -13,6 +13,7 @@
     "postinstall": "node src/copy-assets.js"
   },
   "dependencies": {
+    "@neodrag/svelte": "^2.0.3",
     "@vercel/analytics": "^1.2.2",
     "@vercel/speed-insights": "^1.0.10",
     "json-beautify": "^1.1.1",

@@ -160,12 +160,6 @@
       </div>
     </HeadlessConsole>
   </div>
-  {#if focusedError}
-    {#await import("$lib/components/ErrorExplainModal.svelte") then { default: ErrorExplainModal }}
-      {@const { traceback, code } = focusedError}
-      <svelte:component this={ErrorExplainModal} {traceback} {code} />
-    {/await}
-  {/if}
 </div>
 
 <Modal show={!$pyodideReady}>
@@ -174,6 +168,14 @@
       <div in:scale={{ easing: cubicOut, start: 0.8 }} out:scale|global={{ easing: cubicIn, start: 0.9 }} class="rounded-lg bg-white/3 p-4 text-white/70">
         <div class="i-svg-spinners-90-ring-with-bg text-xl" />
       </div>
+    {/await}
+  </svelte:fragment>
+</Modal>
+
+<Modal show={focusedError !== undefined}>
+  <svelte:fragment slot="content">
+    {#await import("$lib/components/ErrorExplainModal.svelte") then { default: ErrorExplainModal }}
+      <svelte:component this={ErrorExplainModal} bind:errorInfo={focusedError} />
     {/await}
   </svelte:fragment>
 </Modal>
