@@ -1,3 +1,4 @@
+import { pyodideReady } from "../stores";
 import * as env from "$env/static/public";
 import { cacheSingleton } from "$lib/utils/cache";
 import { withToast } from "$lib/utils/toast";
@@ -25,6 +26,8 @@ async function initPy() {
   await py.runPythonAsync(initCode);
 
   toast.dismiss(info);
+
+  pyodideReady.set(true);
 
   return py;
 }
