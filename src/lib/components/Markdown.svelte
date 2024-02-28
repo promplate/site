@@ -20,7 +20,7 @@
   }
 
   article :global(pre code) {
-    --uno: whitespace-pre bg-transparent;
+    --uno: whitespace-pre bg-transparent translate-none;
   }
 
   article :global(code) {
