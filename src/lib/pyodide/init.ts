@@ -1,4 +1,7 @@
+import type { ClientOptions } from "openai";
+
 import { pyodideReady } from "../stores";
+import { getEnv } from "../utils/env";
 import * as env from "$env/static/public";
 import { cacheSingleton } from "$lib/utils/cache";
 import { withToast } from "$lib/utils/toast";
@@ -8,20 +11,29 @@ const indexURL = typeof window === "undefined" ? undefined : (process.env.NODE_E
 
 async function initPyodide() {
   const { loadPyodide } = await import("pyodide");
-  return await loadPyodide({ indexURL, env: { ...env }, packages: ["micropip", "typing-extensions"] });
+  return await loadPyodide({ indexURL, env: getEnv(), packages: ["micropip", "typing-extensions"] });
 }
 
 async function initPy() {
-  const [py, { AsyncClient }, version, { default: initCode }] = await Promise.all([
+  const [py, { OpenAI }, version, { default: initCode }] = await Promise.all([
     initPyodide(),
-    import("./translate"),
+    import("openai"),
     import("openai/version"),
     import("./init.py?raw"),
   ]);
   const info = toast.loading("installing extra python dependencies");
 
-  py.registerJsModule("openai", { AsyncClient, Client: () => null, version, __all__: [] });
-  py.registerJsModule("httpx", { AsyncClient: () => null, Client: () => null });
+  class PatchedOpenAI extends OpenAI {
+    constructor(options: ClientOptions) {
+      if (!options.apiKey)
+        (options.apiKey = env.PUBLIC_OPENAI_API_KEY);
+      if (!options.baseURL)
+        options.baseURL = env.PUBLIC_OPENAI_BASE_URL;
+      super(options);
+    }
+  }
+
+  py.registerJsModule("openai", { OpenAI: PatchedOpenAI, version, __all__: [] });
 
   await py.runPythonAsync(initCode);
 

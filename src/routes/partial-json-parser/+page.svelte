@@ -6,7 +6,7 @@
   import { parse } from "partial-json";
   import { onMount } from "svelte";
 
-  const openai = new OpenAI({ apiKey: env.PUBLIC_OPENAI_API_KEY ?? "", baseURL: env.PUBLIC_OPENAI_API_BASE, dangerouslyAllowBrowser: true });
+  const openai = new OpenAI({ apiKey: env.PUBLIC_OPENAI_API_KEY ?? "", baseURL: env.PUBLIC_OPENAI_BASE_URL, dangerouslyAllowBrowser: true });
 
   let running = false;
   let loading = true;
