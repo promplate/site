@@ -1,3 +1,5 @@
+import builtins
+
 from pyodide.console import ConsoleFuture, PyodideConsole
 from pyodide.ffi import to_js
 
@@ -11,4 +13,4 @@ def complete(source: str):
     return to_js(console.complete(source), depth=2)
 
 
-console = PyodideConsole()
+console = PyodideConsole({"__name__": "__main__", "__builtins__": builtins})
