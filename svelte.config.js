@@ -1,5 +1,6 @@
-import adapter from "@sveltejs/adapter-vercel";
+import adapterVercel from "@sveltejs/adapter-vercel";
 import { vitePreprocess } from "@sveltejs/vite-plugin-svelte";
+import adapterZeabur from "@zeabur/svelte-adapter";
 import { mdsvex } from "mdsvex";
 import rehypeAutolinkHeadings from "rehype-autolink-headings";
 import rehypeSlug from "rehype-slug";
@@ -16,7 +17,7 @@ const config = {
   preprocess: [vitePreprocess(), mdsvex(mdsvexConfig)],
 
   kit: {
-    adapter: adapter({ isr: { expiration: false } }),
+    adapter: process.env.VERCEL ? adapterVercel() : adapterZeabur(),
   },
 };
 
