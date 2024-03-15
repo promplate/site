@@ -7,7 +7,7 @@ import { cacheSingleton } from "$lib/utils/cache";
 import { withToast } from "$lib/utils/toast";
 import { toast } from "svelte-sonner";
 
-const indexURL = typeof window === "undefined" ? undefined : (process.env.NODE_ENV === "production" && env.PUBLIC_PYODIDE_INDEX_URL) || "/pyodide/";
+const indexURL = typeof window === "undefined" ? undefined : (process.env.NODE_ENV === "production" && env.PUBLIC_PYODIDE_INDEX_URL) || "https://cdn.jsdelivr.net/pyodide/v0.25.0/full/";
 
 async function initPyodide() {
   const { loadPyodide } = await import("pyodide");
