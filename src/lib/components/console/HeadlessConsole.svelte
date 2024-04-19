@@ -13,13 +13,14 @@
 
 <script lang="ts">
   import { getPy, initConsole } from "$lib/pyodide";
-  import { onMount } from "svelte";
+  import { afterUpdate, beforeUpdate, onMount } from "svelte";
 
   export let ready = false;
   export let status: Status = "complete";
   export let log: Item[] = [];
   export let pyConsole: PyProxy;
   export let complete: AutoComplete;
+  export let autoScroll: false | "instant" | "smooth" = "smooth";
 
   let loading = 0;
 
@@ -90,6 +91,24 @@
       }
     }
   }
+
+  let needScroll = false;
+
+  beforeUpdate(() => {
+    if (!autoScroll)
+      return;
+
+    const el = document.documentElement;
+    const offsetBottom = el.scrollHeight - el.scrollTop - el.clientHeight;
+    needScroll = offsetBottom < 200;
+  });
+
+  afterUpdate(() => {
+    if (autoScroll && needScroll) {
+      const el = document.documentElement;
+      el.scrollTo({ top: el.scrollHeight, behavior: autoScroll });
+    }
+  });
 </script>
 
 <slot {status} {loading} />

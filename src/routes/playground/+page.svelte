@@ -179,3 +179,5 @@
     {/await}
   </svelte:fragment>
 </Modal>
+
+<svelte:body on:click|self={() => inputRef.focus()} />
