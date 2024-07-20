@@ -7,7 +7,7 @@ from promplate.llm.openai import AsyncChatOpenAI
 
 template = Template(prompt)
 
-llm = AsyncChatOpenAI().bind(model="gpt-3.5-turbo-0125", temperature=0)
+llm = AsyncChatOpenAI().bind(model="gpt-4o-mini", temperature=0)
 
 context = ChainMap(__builtins__.__dict__, context, defaultdict(lambda: ""))
 

@@ -41,14 +41,14 @@ pip install promplate[openai] -i https://pypi.tuna.tsinghua.edu.cn/simple
 然后像这样调用：
 
 <CodeBlock portal previous={["chat-complete"]} code={`
->>> complete("你好", model="gpt-3.5-turbo-0125")
+>>> complete("你好", model="gpt-4o-mini")
 '你好！有什么可以帮助你的吗？'
 `.trim()} />
 
 你可能懒得每次调用 `complete` 的时候都要填写 `model` 参数，那你可以把参数绑定到 `complete` 上面：
 
 <CodeBlock id="chat-complete-binded" code={`
->>> complete = ChatComplete(api_key="...").bind(model="gpt-3.5-turbo-0125")
+>>> complete = ChatComplete(api_key="...").bind(model="gpt-4o-mini")
 `.trim()} />
 
 然后只需用一个字符串来调用它：
@@ -62,7 +62,7 @@ pip install promplate[openai] -i https://pypi.tuna.tsinghua.edu.cn/simple
 我有个教育目的的免费代理站，你不用 API Key 也能免费使用。像这样填写 <code>base_url</code> 字段即可：
 <CodeBlock portal code={`
 >>> from promplate.llm.openai import ChatComplete
->>> complete = ChatComplete(base_url="https://promplate.dev", api_key="").bind(model="gpt-3.5-turbo-0125")
+>>> complete = ChatComplete(base_url="https://promplate.dev", api_key="").bind(model="gpt-4o-mini")
 >>> complete("随便说点什么")
 '今天的天气真是美好，阳光明媚，让人心情也变得愉快起来。希望每个人都能在这样的日子里感受到幸福和快乐。无论遇到什么困难和挑战，都要坚持积极向前，相信明天会更好。愿大家都拥有一个美好的一天！'
 `.trim()} />
@@ -87,7 +87,7 @@ pip install promplate[openai] -i https://pypi.tuna.tsinghua.edu.cn/simple
 只需使用 <code>ChatGenerate</code>，然后用 for 循环去迭代它：
 <CodeBlock portal code={`
 >>> from promplate.llm.openai import ChatGenerate
->>> generate = ChatGenerate(api_key="...").bind(model="gpt-3.5-turbo-0125")
+>>> generate = ChatGenerate(api_key="...").bind(model="gpt-4o-mini")
 >>> for i in generate("为什么 1 + 1 = 2"):
 ...     print(i, end="", flush=True)  # 这会逐渐打印生成的token
 ...
