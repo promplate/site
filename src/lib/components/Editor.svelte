@@ -18,7 +18,7 @@
     shikiToMonaco(highlighter, monaco);
 
     const editor = monaco.editor.create(container, {
-      value: source,
+      value: source.replaceAll("\r\n", "\n"),
       language: lang,
       theme: "vitesse-dark",
       fontFamily: "fira code",
@@ -38,7 +38,7 @@
       automaticLayout: true,
     });
 
-    editor.onDidChangeModelContent(() => source = editor.getValue());
+    editor.onDidChangeModelContent(() => source = editor.getValue({ lineEnding: "\n", preserveBOM: false }));
   });
 </script>
 
