@@ -37,7 +37,7 @@ async function preparePackages(names) {
 
 if (process.env.NODE_ENV !== "production" || !process.env.PUBLIC_PYODIDE_INDEX_URL)
   // eslint-disable-next-line antfu/no-top-level-await
-  await preparePackages(["micropip", "packaging", "typing_extensions"]);
+  await preparePackages(["micropip", "packaging"]);
 
 if (!fs.existsSync(targetDir)) {
   fs.rmSync(targetDir, { force: true });
