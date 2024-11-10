@@ -3,11 +3,11 @@ import { vitePreprocess } from "@sveltejs/vite-plugin-svelte";
 import { mdsvex } from "mdsvex";
 import rehypeAutolinkHeadings from "rehype-autolink-headings";
 import rehypeSlug from "rehype-slug";
+import rehypeUnwrapImages from "rehype-unwrap-images";
 import remarkToc from "remark-toc";
-import remarkUnwrapImages from "remark-unwrap-images";
 
 /** @type {import("mdsvex").MdsvexOptions} */
-const mdsvexConfig = { extensions: [".svx"], smartypants: { dashes: "oldschool" }, remarkPlugins: [remarkUnwrapImages, remarkToc], rehypePlugins: [rehypeSlug, [rehypeAutolinkHeadings, { behavior: "wrap" }]] };
+const mdsvexConfig = { extensions: [".svx"], smartypants: { dashes: "oldschool" }, remarkPlugins: [remarkToc], rehypePlugins: [rehypeUnwrapImages, rehypeSlug, [rehypeAutolinkHeadings, { behavior: "wrap" }]] };
 
 /** @type {import('@sveltejs/kit').Config} */
 const config = {
