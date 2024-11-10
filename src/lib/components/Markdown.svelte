@@ -16,11 +16,11 @@
   }
 
   article :global(pre) {
-    --uno: leading-relaxed py-4 px-3;
+    --uno: leading-relaxed p-4;
   }
 
   article :global(pre code) {
-    --uno: whitespace-pre bg-transparent translate-none;
+    --uno: whitespace-pre bg-transparent translate-none p-0 m-0;
   }
 
   article :global(code) {
