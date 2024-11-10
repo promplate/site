@@ -11,7 +11,7 @@ const indexURL = typeof window === "undefined" ? undefined : (process.env.NODE_E
 
 async function initPyodide() {
   const { loadPyodide } = await import("pyodide");
-  return await loadPyodide({ indexURL, env: getEnv(), packages: ["micropip", "typing-extensions"] });
+  return await loadPyodide({ indexURL, env: getEnv(), packages: ["micropip"] });
 }
 
 async function initPy() {

@@ -26,5 +26,5 @@ chain = reply + translate
 
 output = chain.invoke(
     {"time": time, "name": "muspi merol"},
-    ChatComplete().bind(model="gpt-3.5-turbo"),
+    ChatComplete().bind(model="gpt-4o-mini"),
 )  # 大约等待 3 秒，这期间会请求两次 OpenAI

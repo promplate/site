@@ -64,7 +64,7 @@
       json_string = json_string.substring(json_string.indexOf("{"));
       return beautify(parse(json_string), reviver, 3, 40).replaceAll(String(nanPlaceholder), "NaN").replaceAll(String(infPlaceholder), "Infinity").replaceAll(String(_infPlaceholder), "-Infinity");
     }
-    catch (e) {
+    catch {
       return "";
     }
   };

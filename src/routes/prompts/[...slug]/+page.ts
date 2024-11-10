@@ -5,7 +5,7 @@ export const load = (async ({ params: { slug } }) => {
     const { default: prompt } = await import(`../../../templates/${slug}.j2?raw`);
     return { prompt };
   }
-  catch (_) {
+  catch {
     return {};
   }
 }) satisfies PageLoad;

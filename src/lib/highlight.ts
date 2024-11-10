@@ -1,9 +1,9 @@
 import type { ShikiTransformer } from "shiki";
 
-import { cacheGlobally } from "./utils/cache";
+import { cacheOnce } from "./utils/cache";
 
 export async function getHighlighter(lang: string) {
-  return await cacheGlobally(`shiki-${lang}`, async () => {
+  return await cacheOnce(`shiki-${lang}`, async () => {
     const { getHighlighter } = await import("shiki");
     return await getHighlighter({ themes: ["vitesse-dark"], langs: [lang] });
   })();
