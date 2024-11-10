@@ -1,6 +1,6 @@
 import type { BuiltinLanguage } from "shiki";
 
-import { cacheGlobally } from "./utils/cache";
+import { cacheOnce } from "./utils/cache";
 import rehypeShiki from "@shikijs/rehype";
 import rehypeStringify from "rehype-stringify";
 import remarkParse from "remark-parse";
@@ -12,7 +12,7 @@ async function getProcessor(langs: BuiltinLanguage[] = []) {
 }
 
 export async function renderMarkdown(text: string, langs: BuiltinLanguage[] = []) {
-  const processor = await cacheGlobally(`md-${langs.join()}`, getProcessor.bind(null, langs))();
+  const processor = await cacheOnce(`md-${langs.join()}`, getProcessor.bind(null, langs))();
   const { value } = await processor.process(text);
   return value as string;
 };
