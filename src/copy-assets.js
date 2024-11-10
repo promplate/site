@@ -1,4 +1,3 @@
-import { Buffer } from "node:buffer";
 import * as fs from "node:fs";
 import { writeFile } from "node:fs/promises";
 import { createRequire } from "node:module";
@@ -12,15 +11,17 @@ const targetDir = resolve(join("static", "pyodide"));
 const lock = fs.readFileSync(join(pyodideDir, "pyodide-lock.json"), "utf-8");
 const { version } = JSON.parse(fs.readFileSync(join(pyodideDir, "package.json"), "utf-8"));
 
+/** @param {string} slug */
 async function downloadPackage(slug) {
   const path = join(pyodideDir, slug);
   if (!fs.existsSync(path)) {
     const res = await fetch(`https://cdn.jsdelivr.net/pyodide/v${version}/full/${slug}`);
     const data = await res.arrayBuffer();
-    await writeFile(path, Buffer.from(data));
+    await writeFile(path, new Uint8Array(data));
   }
 }
 
+/** @param {string[]} names */
 async function preparePackages(names) {
   const promises = [];
 
@@ -35,6 +36,7 @@ async function preparePackages(names) {
 }
 
 if (process.env.NODE_ENV !== "production" || !process.env.PUBLIC_PYODIDE_INDEX_URL)
+  // eslint-disable-next-line antfu/no-top-level-await
   await preparePackages(["micropip", "packaging", "typing_extensions"]);
 
 if (!fs.existsSync(targetDir)) {

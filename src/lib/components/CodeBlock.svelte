@@ -1,7 +1,7 @@
 <script lang="ts">
   import { highlight } from "../highlight";
   import Portal from "./Portal.svelte";
-  import { type SourceRef, saveSource } from "$lib/utils/source";
+  import { saveSource, type SourceRef } from "$lib/utils/source";
   import { onMount } from "svelte";
 
   export let code: string;
