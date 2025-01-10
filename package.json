@@ -36,7 +36,7 @@
     "@typescript-eslint/parser": "^8.13.0",
     "@unocss/eslint-config": "^0.62.4",
     "@unocss/extractor-svelte": "^0.62.4",
-    "@unocss/reset": "^0.62.4",
+    "@unocss/reset": "^65.4.0",
     "eslint": "^9.14.0",
     "eslint-plugin-format": "^1.0.1",
     "eslint-plugin-svelte": "^2.46.0",
