@@ -1,7 +1,9 @@
 <script lang="ts">
+  import type { SourceRef } from "$lib/utils/source";
+
   import { goto, preloadData } from "$app/navigation";
   import { getPy } from "$lib/pyodide";
-  import { refToSource, type SourceRef } from "$lib/utils/source";
+  import { refToSource } from "$lib/utils/source";
 
   export let source: string;
   export let previous: SourceRef[] = [];
