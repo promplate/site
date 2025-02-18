@@ -23,7 +23,7 @@
     "pyodide": "^0.27.0"
   },
   "devDependencies": {
-    "@antfu/eslint-config": "^3.8.0",
+    "@antfu/eslint-config": "^4.0.0",
     "@ethercorps/sveltekit-og": "3.0.0",
     "@iconify/json": "latest",
     "@julr/unocss-preset-heropatterns": "^1.0.2",
