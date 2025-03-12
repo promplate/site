@@ -47,14 +47,14 @@ export default async () => {
     AsyncChatGenerate(clientOptions: ClientOptions) {
       return async function* (input: string, options?: ChatCompletionParams) {
         const generate: PyCallable = (py.runPython("AsyncChatGenerate") as PyCallable).callKwargs(await toPyOptions(clientOptions));
-        yield * generate.callKwargs(input, { ...options });
+        yield* generate.callKwargs(input, { ...options });
         generate.destroy();
       };
     },
     AsyncTextGenerate(clientOptions: ClientOptions) {
       return async function* (input: string, options?: TextCompletionParams) {
         const generate: PyCallable = (py.runPython("AsyncTextGenerate") as PyCallable).callKwargs(await toPyOptions(clientOptions));
-        yield * generate.callKwargs(input, { ...options });
+        yield* generate.callKwargs(input, { ...options });
         generate.destroy();
       };
     },
