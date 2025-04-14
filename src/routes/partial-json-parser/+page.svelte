@@ -34,7 +34,7 @@
     loading = true;
 
     const res = await openai.chat.completions.create({
-      model: "gpt-4o-mini",
+      model: "gpt-4.1-nano",
       messages: [
         { role: "system", content: "your answer should be a valid JSON string, with no code block. Just the JSON, without anything else." },
         { role: "user", content: "I am learning JSON. Please give me a complex nested JSON example containing short strings, arrays, objects, NaN, Infinity, booleans, null, scientific notation floats and a few emojis represented by unicode chars. Note that you should beautify your JSON response." },
