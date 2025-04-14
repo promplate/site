@@ -21,5 +21,5 @@ translate = Node(translate_template, temperature=0.2)
 
 output = (reply + translate).invoke(
     {"time": time, "name": "muspi merol"},
-    ChatComplete().bind(model="gpt-4o-mini"),
+    ChatComplete().bind(model="gpt-4.1-nano"),
 )
