@@ -8,19 +8,19 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Set up python
-        uses: actions/setup-python@v5
+        uses: astral-sh/setup-uv@v5
         with:
-          python-version: "3.11"
+          python-version: "3.13"
       - name: Install dependencies
         run: |
-          pip install promplate[all] promplate-pyodide isort black pyodide-py
-          yarn global add pyright
+          uv pip install promplate[all] promplate-pyodide isort black pyodide-py
       - name: Run isort check
         run: |
           isort . --check --diff
       - name: Run black check
         run: |
           black . --check --diff
+      - uses: oven-sh/setup-bun@v2
       - name: Run pyright check
         run: |
-          pyright
+          bunx pyright
