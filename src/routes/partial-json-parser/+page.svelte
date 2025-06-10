@@ -1,12 +1,10 @@
 <script lang="ts">
+  import { streamText } from "@xsai/stream-text";
   import * as env from "$env/static/public";
   import CodeBlock from "$lib/components/CodeBlock.svelte";
   import beautify from "json-beautify";
-  import { OpenAI } from "openai";
   import { parse } from "partial-json";
   import { onMount } from "svelte";
-
-  const openai = new OpenAI({ apiKey: env.PUBLIC_OPENAI_API_KEY ?? "", baseURL: env.PUBLIC_OPENAI_BASE_URL, dangerouslyAllowBrowser: true });
 
   let running = false;
   let loading = true;
@@ -33,24 +31,23 @@
     running = true;
     loading = true;
 
-    const res = await openai.chat.completions.create({
+    const res = await streamText({
       model: "gpt-4.1-nano",
       messages: [
         { role: "system", content: "your answer should be a valid JSON string, with no code block. Just the JSON, without anything else." },
         { role: "user", content: "I am learning JSON. Please give me a complex nested JSON example containing short strings, arrays, objects, NaN, Infinity, booleans, null, scientific notation floats and a few emojis represented by unicode chars. Note that you should beautify your JSON response." },
       ],
       temperature: 1.1,
-      stream: true,
+      apiKey: env.PUBLIC_OPENAI_API_KEY ?? "",
+      baseURL: env.PUBLIC_OPENAI_BASE_URL ?? "https://api.openai.com/v1",
     });
 
     loading = false;
     json_string = "";
 
     try {
-      for await (const chunk of res) {
-        const delta = chunk.choices[0].delta.content ?? "";
-        if (delta)
-          json_string += delta;
+      for await (const delta of res.textStream) {
+        json_string += delta;
       }
     }
     catch (e) {

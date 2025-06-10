@@ -1,6 +1,7 @@
 {
   "extends": "./.svelte-kit/tsconfig.json",
   "compilerOptions": {
+    "lib": ["DOM.AsyncIterable"],
     "resolveJsonModule": true,
     "allowJs": true,
     "checkJs": true,
