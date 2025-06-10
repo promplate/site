@@ -59,9 +59,10 @@
     running = false;
   }
 
+  $: pure_json = json_string.substring(json_string.indexOf("{")).replace(/\n`+$/g, "");
+
   const show = (json_string: string) => {
     try {
-      json_string = json_string.substring(json_string.indexOf("{"));
       return beautify(parse(json_string), reviver, 3, 40).replaceAll(String(nanPlaceholder), "NaN").replaceAll(String(infPlaceholder), "Infinity").replaceAll(String(_infPlaceholder), "-Infinity");
     }
     catch {
@@ -80,7 +81,7 @@
         <div>Raw Partial JSON</div>
       </div>
       <div class:op-50={loading} class="flex flex-col transition-opacity lg:h-[calc(100vh-18.5rem)]">
-        <CodeBlock collapse lang="json" code={json_string} />
+        <CodeBlock collapse lang="json" code={pure_json} />
       </div>
     </div>
     <div class="w-[calc(100vw-4rem)] 2xl:w-xl lg:w-md md:w-xl sm:w-lg xl:w-lg">
@@ -89,7 +90,7 @@
         <div>Parsed Partial JSON</div>
       </div>
       <div class:op-50={loading} class="flex flex-col transition-opacity lg:h-[calc(100vh-18.5rem)] [&>section]:(b-2 b-white/70)">
-        <CodeBlock collapse lang="json" code={show(json_string)} />
+        <CodeBlock collapse lang="json" code={show(pure_json)} />
       </div>
     </div>
   </div>
