@@ -18,4 +18,9 @@ export default antfu({
     "svelte/no-at-html-tags": "off",
     "no-console": "warn",
   },
+  overrides: {
+    svelte: {
+      "import/no-mutable-exports": "off",
+    },
+  },
 });
