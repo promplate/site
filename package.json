@@ -30,7 +30,7 @@
     "@julr/unocss-preset-heropatterns": "^2.0.0",
     "@shikijs/monaco": "^3.0.0",
     "@shikijs/rehype": "^3.0.0",
-    "@sveltejs/adapter-vercel": "^5.4.7",
+    "@sveltejs/adapter-vercel": "^6.0.0",
     "@sveltejs/kit": "^2.8.0",
     "@sveltejs/vite-plugin-svelte": "^3.1.2",
     "@typescript-eslint/eslint-plugin": "^8.13.0",
