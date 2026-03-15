@@ -23,4 +23,9 @@ export default antfu({
       "import/no-mutable-exports": "off",
     },
   },
+}, {
+  files: ["**/*.md"],
+  rules: {
+    "perfectionist/sort-imports": "off",
+  },
 });
