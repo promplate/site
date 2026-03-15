@@ -15,7 +15,7 @@
   "dependencies": {
     "@neodrag/svelte": "^2.0.6",
     "@vercel/analytics": "^2.0.0",
-    "@vercel/speed-insights": "^1.1.0",
+    "@vercel/speed-insights": "^2.0.0",
     "@xsai/stream-text": "0.4.4",
     "json-beautify": "^1.1.1",
     "langchainhub": "^0.0.11",
