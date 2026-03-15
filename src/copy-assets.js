@@ -7,6 +7,7 @@ const require = createRequire(resolve("node_modules"));
 
 const pyodideDir = dirname(require.resolve("pyodide"));
 const targetDir = resolve(join("static", "pyodide"));
+const WHEEL_PATTERN = /"[^"\s]+\.whl"/g;
 
 const lock = fs.readFileSync(join(pyodideDir, "pyodide-lock.json"), "utf-8");
 const { version } = JSON.parse(fs.readFileSync(join(pyodideDir, "package.json"), "utf-8"));
@@ -25,7 +26,7 @@ async function downloadPackage(slug) {
 async function preparePackages(names) {
   const promises = [];
 
-  for (const url of lock.matchAll(/"[^"\s]+\.whl"/g)) {
+  for (const url of lock.matchAll(WHEEL_PATTERN)) {
     const slug = url[0].slice(1, -1);
 
     if (names.some(name => slug.includes(name)))

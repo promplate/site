@@ -11,6 +11,9 @@ interface PyClientOptions {
   defaultQuery?: PyProxy;
 }
 
+const INVOKE_PATTERN = /(\S+|\(.*\))\.invoke/g;
+const GENERATE_LOOP_PATTERN = /for (\w+) in generate/g;
+
 export function toJs(obj: PyProxy) {
   return obj.toJs({ dict_converter: Object.fromEntries });
 }
@@ -33,12 +36,12 @@ export async function toPyOptions(options: ClientOptions) {
 
 export function toAsync(source: string) {
   return source
-    .replaceAll(/(\S+|\(.*\))\.invoke/g, "await $1.ainvoke")
+    .replaceAll(INVOKE_PATTERN, "await $1.ainvoke")
     .replaceAll("ChatComplete", "AsyncChatComplete")
     .replaceAll("ChatGenerate", "AsyncChatGenerate")
     .replaceAll("TextComplete", "AsyncTextComplete")
     .replaceAll("complete(", "await complete(")
-    .replaceAll(/for (\w+) in generate/g, "async for $1 in generate");
+    .replaceAll(GENERATE_LOOP_PATTERN, "async for $1 in generate");
 }
 
 export function patchSource(source: string) {
