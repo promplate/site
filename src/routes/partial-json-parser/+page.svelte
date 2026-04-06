@@ -2,6 +2,7 @@
   import { streamText } from "@xsai/stream-text";
   import * as env from "$env/static/public";
   import CodeBlock from "$lib/components/CodeBlock.svelte";
+  import HighlightedTextarea from "$lib/components/HighlightedTextarea.svelte";
   import beautify from "json-beautify";
   import { parse } from "partial-json";
   import { onMount } from "svelte";
@@ -31,7 +32,7 @@
     running = true;
     loading = true;
 
-    const res = await streamText({
+    const res = streamText({
       model: "gpt-4.1-nano",
       messages: [
         { role: "system", content: "your answer should be a valid JSON string, with no code block. Just the JSON, without anything else." },
@@ -41,18 +42,18 @@
       apiKey: env.PUBLIC_OPENAI_API_KEY ?? "",
       baseURL: env.PUBLIC_OPENAI_BASE_URL ?? "https://api.openai.com/v1",
     });
-
-    loading = false;
-    json_string = "";
-
+    let rawOutput = "";
     try {
       for await (const delta of res.textStream) {
-        json_string += delta;
+        loading = false;
+        rawOutput += delta;
+        json_string = rawOutput;
       }
     }
     catch (e) {
       json_string = String(e);
     }
+    loading = false;
     running = false;
   }
 
@@ -78,7 +79,7 @@
         <div>Raw Partial JSON</div>
       </div>
       <div class:op-50={loading} class="flex flex-col transition-opacity lg:h-[calc(100vh-18.5rem)]">
-        <CodeBlock collapse lang="json" code={pure_json} />
+        <HighlightedTextarea bind:value={pure_json} ariaLabel="Raw partial JSON editor" lang="json" />
       </div>
     </div>
     <div class="w-[calc(100vw-4rem)] 2xl:w-xl lg:w-md md:w-xl sm:w-lg xl:w-lg">
