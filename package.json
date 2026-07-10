@@ -25,7 +25,7 @@
   },
   "devDependencies": {
     "@antfu/eslint-config": "^7.0.0",
-    "@ethercorps/sveltekit-og": "3.0.0",
+    "@ethercorps/sveltekit-og": "4.3.0",
     "@iconify/json": "latest",
     "@julr/unocss-preset-heropatterns": "^2.0.0",
     "@shikijs/monaco": "^4.0.0",
