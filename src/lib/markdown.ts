@@ -3,12 +3,13 @@ import type { BuiltinLanguage } from "shiki";
 import { cacheOnce } from "./utils/cache";
 import rehypeShiki from "@shikijs/rehype";
 import rehypeStringify from "rehype-stringify";
+import remarkCjkFriendly from "remark-cjk-friendly/parseOnly";
 import remarkParse from "remark-parse";
 import remarkRehype from "remark-rehype";
 import { unified } from "unified";
 
 async function getProcessor(langs: BuiltinLanguage[] = []) {
-  return unified().use(remarkParse).use(remarkRehype).use(rehypeShiki, { theme: "vitesse-dark", langs }).use(rehypeStringify);
+  return unified().use(remarkParse).use(remarkCjkFriendly).use(remarkRehype).use(rehypeShiki, { theme: "vitesse-dark", langs }).use(rehypeStringify);
 }
 
 export async function renderMarkdown(text: string, langs: BuiltinLanguage[] = []) {
