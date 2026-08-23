@@ -10,7 +10,8 @@
     "check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
     "check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
     "lint": "eslint .",
-    "postinstall": "node src/copy-assets.js"
+    "postinstall": "node src/copy-assets.js",
+    "test": "bun test"
   },
   "dependencies": {
     "@neodrag/svelte": "^2.0.6",
@@ -47,6 +48,7 @@
     "rehype-slug": "^6.0.0",
     "rehype-stringify": "^10.0.1",
     "rehype-unwrap-images": "^1.0.0",
+    "remark-cjk-friendly": "^2.3.1",
     "remark-parse": "^11.0.0",
     "remark-rehype": "^11.1.1",
     "remark-toc": "^9.0.0",
