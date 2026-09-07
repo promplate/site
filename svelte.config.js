@@ -4,10 +4,11 @@ import { mdsvex } from "mdsvex";
 import rehypeAutolinkHeadings from "rehype-autolink-headings";
 import rehypeSlug from "rehype-slug";
 import rehypeUnwrapImages from "rehype-unwrap-images";
+import remarkCjkFriendly from "remark-cjk-friendly/parseOnly";
 import remarkToc from "remark-toc";
 
 /** @type {import("mdsvex").MdsvexOptions} */
-const mdsvexConfig = { extensions: [".svx"], smartypants: { dashes: "oldschool" }, remarkPlugins: [remarkToc], rehypePlugins: [rehypeUnwrapImages, rehypeSlug, [rehypeAutolinkHeadings, { behavior: "wrap" }]] };
+const mdsvexConfig = { extensions: [".svx"], smartypants: { dashes: "oldschool" }, remarkPlugins: [remarkCjkFriendly, remarkToc], rehypePlugins: [rehypeUnwrapImages, rehypeSlug, [rehypeAutolinkHeadings, { behavior: "wrap" }]] };
 
 /** @type {import('@sveltejs/kit').Config} */
 const config = {
