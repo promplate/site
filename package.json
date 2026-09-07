@@ -10,8 +10,7 @@
     "check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
     "check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
     "lint": "eslint .",
-    "postinstall": "node src/copy-assets.js",
-    "test": "bun test"
+    "postinstall": "node src/copy-assets.js"
   },
   "dependencies": {
     "@neodrag/svelte": "^2.0.6",
