@@ -2,7 +2,7 @@ import type { ClientOptions } from "openai";
 
 import { pyodideReady } from "../stores";
 import { getEnv } from "../utils/env";
-import * as env from "$env/static/public";
+import * as env from "$app/env/public";
 import { cacheSingleton } from "$lib/utils/cache";
 import { withToast } from "$lib/utils/toast";
 import { toast } from "svelte-sonner";

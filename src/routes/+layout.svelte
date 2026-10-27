@@ -2,15 +2,15 @@
   import "@unocss/reset/tailwind-compat.css";
   import "uno.css";
 
-  import { dev } from "$app/environment";
-  import { page } from "$app/stores";
-  import * as env from "$env/static/public";
+  import { dev } from "$app/env";
+  import * as env from "$app/env/public";
+  import { page } from "$app/state";
   import { Toaster } from "svelte-sonner";
 
   const headScripts = atob(env.PUBLIC_HEAD_SCRIPTS ?? "");
 
   const ogTitle = "Promplate Docs";
-  const ogImage = `${$page.url.origin}/og${$page.url.pathname}`;
+  const ogImage = `${page.url.origin}/og${page.url.pathname}`;
   const ogDescription = "Documentation site for Promplate the prompting framework";
 </script>
 
