@@ -34,6 +34,7 @@ const typography = presetTypography<Theme>({
     "h3 code": { "font-size": ".875em" },
     "img": { margin: "0" },
     "code": { "font-family": fontFamily!.mono },
+    "kbd": { "font-weight": "inherit", "font-family": "ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, \"Liberation Mono\", \"Courier New\", monospace", "border": "1px solid", "padding": ".25rem .5rem", "border-radius": ".25rem" },
     "pre": { "color": "inherit", "background-color": "transparent", "font-weight": "inherit", "font-size": "inherit", "line-height": "1.75", "margin": "1em 0", "padding": "1.25rem 1.5rem" },
     "pre code": { "font-size": ".875em", "font-family": fontFamily!.mono },
     "pre, code": { "white-space": "pre", "word-spacing": "normal", "word-break": "normal", "overflow-wrap": "normal", "tab-size": "4", "hyphens": "none" },
