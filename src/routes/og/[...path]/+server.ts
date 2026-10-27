@@ -1,10 +1,9 @@
 import type { RequestHandler } from "@sveltejs/kit";
 import type { Post } from "$lib/types";
-import type { SvelteComponent } from "svelte";
 
 import component from "./OG.svelte";
 import { ImageResponse } from "@ethercorps/sveltekit-og";
-import { cast } from "$lib/utils/typing";
+import { render } from "svelte/server";
 
 let fontData: ArrayBuffer | null = null;
 
@@ -13,7 +12,7 @@ export const GET: RequestHandler = async ({ url: { origin }, params, fetch }) =>
 
   const path: string = params.path ?? "";
 
-  const context: { href: string; title?: string; subtitle?: string } = { href: `${origin}/${decodeURI(path)}` };
+  const context = { href: `${origin}/${decodeURI(path)}`, title: "promplate docs", subtitle: "the prompting framework" };
 
   if (path.startsWith("py/")) {
     const posts: Post[] = await fetch("/api/docs").then(res => res.json());
@@ -32,6 +31,6 @@ export const GET: RequestHandler = async ({ url: { origin }, params, fetch }) =>
     context.subtitle = "Interactive Python Terminal";
   }
 
-  const html = cast<SvelteComponent>(component).render(context).html.replaceAll("class=", "tw=");
+  const html = render(component, { props: context }).body.replaceAll("class=", "tw=");
   return new ImageResponse(html, { fonts: [{ name: "inter", data: fontData }] });
 };
