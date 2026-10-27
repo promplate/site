@@ -27,7 +27,7 @@
     <section aria-hidden="true" class="ptr-events-none">
       {@html highlighted}
     </section>
-    <textarea bind:value aria-label={ariaLabel} class="absolute inset-0 m-0 h-full w-full resize-none overflow-hidden whitespace-pre border-0 bg-transparent p-0 text-transparent caret-white/90 outline-none selection:bg-white/14" autocomplete="off" autocapitalize="off" {...{ autocorrect: "off" }} spellcheck="false" wrap="off" />
+    <textarea bind:value aria-label={ariaLabel} class="absolute inset-0 m-0 h-full w-full resize-none overflow-hidden whitespace-pre border-0 bg-transparent p-0 text-transparent caret-white/90 outline-none selection:bg-white/14" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" wrap="off" />
   </div>
 </div>
 
