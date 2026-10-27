@@ -5,7 +5,7 @@
   import type { PyProxy } from "pyodide/ffi";
   import type { ClipboardEventHandler, KeyboardEventHandler } from "svelte/elements";
 
-  import { page } from "$app/stores";
+  import { page } from "$app/state";
   import { Err, In, Out, Repr } from "$lib/components/console";
   import HeadlessConsole from "$lib/components/console/HeadlessConsole.svelte";
   import ConsolePrompt from "$lib/components/ConsolePrompt.svelte";
@@ -18,7 +18,7 @@
 
   export let form: ActionData;
 
-  const { sources } = (form ?? $page.state) as { sources?: Source[] };
+  const { sources } = (form ?? page.state) as { sources?: Source[] };
 
   let log: Item[] = [];
 

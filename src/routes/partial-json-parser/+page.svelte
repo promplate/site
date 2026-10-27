@@ -1,6 +1,6 @@
 <script lang="ts">
   import { streamText } from "@xsai/stream-text";
-  import * as env from "$env/static/public";
+  import * as env from "$app/env/public";
   import CodeBlock from "$lib/components/CodeBlock.svelte";
   import HighlightedTextarea from "$lib/components/HighlightedTextarea.svelte";
   import beautify from "json-beautify";

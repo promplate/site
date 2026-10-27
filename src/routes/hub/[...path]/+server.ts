@@ -55,5 +55,4 @@ export async function GET({ params }) {
   }
 }
 
-// @ts-expect-error override isr config
-export const config: Config = { runtime: "edge", isr: false };
+export const config: Config = { isr: false };
