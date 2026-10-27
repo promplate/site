@@ -6,7 +6,7 @@ import { defineConfig, presetIcons, presetTypography, presetWebFonts, presetWind
 
 const typography = presetTypography<Theme>({
   // The preset before v66.5 never defined these variables, so prose colors were inherited from the page
-  colorScheme: Object.fromEntries(["body", "headings", "lead", "links", "bold", "counters", "bullets", "hr", "quotes", "quote-borders", "captions", "kbd", "kbd-shadows", "code", "pre-code", "pre-bg", "th-borders", "td-borders"].map(key => [key, "inherit"])),
+  colorScheme: { ...Object.fromEntries(["body", "headings", "lead", "links", "bold", "counters", "bullets", "quotes", "captions", "kbd", "kbd-shadows", "code", "pre-code", "pre-bg", "th-borders", "td-borders"].map(key => [key, "inherit"])), "hr": "rgb(255 255 255 / .1)", "quote-borders": "rgb(255 255 255 / .2)" },
   // The site's styles were built on the compact defaults before v66.5, so keep them when upgrading the preset
   cssExtend: ({ fontFamily }) => ({
     "font-size": "inherit",
