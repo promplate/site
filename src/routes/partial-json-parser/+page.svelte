@@ -51,7 +51,7 @@
       }
     }
     catch (e) {
-      json_string = String(e);
+      json_string = (e as Error).message;
     }
     loading = false;
     running = false;
