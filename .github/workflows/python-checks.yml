@@ -10,7 +10,7 @@ jobs:
       - name: Set up python
         uses: astral-sh/setup-uv@v10.3.2
         with:
-          python-version: "3.13"
+          python-version: "3.14"
           activate-environment: true
       - name: Install dependencies
         run: |
