@@ -16,6 +16,11 @@ export default antfu({
     "import/order": "off",
     "node/prefer-global/process": "off",
     "svelte/no-at-html-tags": "off",
+    "svelte/no-navigation-without-resolve": "off",
+    "svelte/require-each-key": "off",
+    "svelte/no-reactive-reassign": "off",
+    "svelte/infinite-reactive-loop": "off",
+    "antfu/reasonable-newline": "off",
     "no-console": "warn",
   },
   overrides: {
