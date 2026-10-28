@@ -40,7 +40,6 @@ if (process.env.NODE_ENV !== "production" || !process.env.PUBLIC_PYODIDE_INDEX_U
   // eslint-disable-next-line antfu/no-top-level-await
   await preparePackages(["micropip", "packaging"]);
 
-if (!fs.existsSync(targetDir)) {
-  fs.rmSync(targetDir, { force: true });
-  fs.symlinkSync(pyodideDir, targetDir);
-}
+fs.rmSync(targetDir, { recursive: true, force: true });
+fs.mkdirSync(targetDir);
+fs.symlinkSync(pyodideDir, join(targetDir, `v${version}`));

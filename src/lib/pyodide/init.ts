@@ -5,9 +5,10 @@ import { getEnv } from "../utils/env";
 import * as env from "$app/env/public";
 import { cacheSingleton } from "$lib/utils/cache";
 import { withToast } from "$lib/utils/toast";
+import { version } from "pyodide/package.json";
 import { toast } from "svelte-sonner";
 
-const indexURL = typeof window === "undefined" ? undefined : (process.env.NODE_ENV === "production" && env.PUBLIC_PYODIDE_INDEX_URL) || "/pyodide/";
+const indexURL = typeof window === "undefined" ? undefined : (process.env.NODE_ENV === "production" && env.PUBLIC_PYODIDE_INDEX_URL) || `/pyodide/v${version}/`;
 
 async function initPyodide() {
   const { loadPyodide } = await import("pyodide");
