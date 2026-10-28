@@ -16,7 +16,7 @@
     "@neodrag/svelte": "^2.0.6",
     "@vercel/analytics": "^2.0.0",
     "@vercel/speed-insights": "^2.1.0-canary",
-    "@xsai/stream-text": "0.4.4",
+    "@xsai/stream-text": "0.5.1",
     "json-beautify": "^2.0.0",
     "langchainhub": "^0.0.11",
     "openai": "^7.0.0",
