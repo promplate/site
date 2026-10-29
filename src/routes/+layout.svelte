@@ -9,9 +9,10 @@
 
   const headScripts = atob(env.PUBLIC_HEAD_SCRIPTS ?? "");
 
-  const ogTitle = "Promplate Docs";
-  const ogImage = `${page.url.origin}/og${page.url.pathname}`;
-  const ogDescription = "Documentation site for Promplate the prompting framework";
+  const { children } = $props();
+  const ogTitle = $derived(page.data.meta?.title ?? "Promplate Docs");
+  const ogImage = $derived(`${page.url.origin}/og${page.url.pathname}`);
+  const ogDescription = $derived(page.data.meta?.description ?? "Documentation site for Promplate the prompting framework");
 </script>
 
 <svelte:head>
@@ -28,14 +29,14 @@
   <meta property="og:image" content={ogImage} />
   <meta property="twitter:image" content={ogImage} />
 
-  <meta property="description" content={ogDescription} />
+  <meta name="description" content={ogDescription} />
   <meta property="og:description" content={ogDescription} />
   <meta property="twitter:description" content={ogDescription} />
 </svelte:head>
 
 <Toaster theme="dark" />
 
-<slot />
+{@render children()}
 
 <style>
   :global(html) {
