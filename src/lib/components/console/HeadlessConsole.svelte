@@ -13,7 +13,7 @@
 
 <script lang="ts">
   import { getPy, initConsole } from "$lib/pyodide";
-  import { afterUpdate, beforeUpdate, onMount } from "svelte";
+  import { afterUpdate, beforeUpdate, onDestroy, onMount } from "svelte";
 
   export let ready = false;
   export let status: Status = "complete";
@@ -23,12 +23,25 @@
   export let autoScroll: false | "instant" | "smooth" = "smooth";
 
   let loading = 0;
+  let disposed = false;
 
   let getWrapped: (future: PyAwaitable) => Promise<[unknown, string]>;
 
+  onDestroy(() => {
+    disposed = true;
+    if (ready) {
+      pyConsole.stdout_callback = undefined;
+      pyConsole.stderr_callback = undefined;
+    }
+  });
+
   onMount(async () => {
     const py = await getPy();
+    if (disposed)
+      return;
     await initConsole();
+    if (disposed)
+      return;
     pyConsole = py.globals.get("console");
     complete = py.globals.get("complete");
     getWrapped = py.globals.get("get_wrapped");
@@ -40,6 +53,8 @@
   });
 
   export function pushLog(item: Item, behind?: Item) {
+    if (disposed)
+      return;
     if (!log.length)
       return void (log = [item]);
 
