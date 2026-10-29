@@ -115,6 +115,10 @@
         break;
       }
 
+      case "Escape":
+        inputRef.blur();
+        break;
+
       case "Tab": {
         event.preventDefault();
         if (!input.trim()) {
