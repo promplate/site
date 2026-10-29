@@ -23,12 +23,13 @@
   export let autoScroll: false | "instant" | "smooth" = "smooth";
 
   let loading = 0;
-  let disposed = false;
+  const controller = new AbortController();
+  const { signal } = controller;
 
   let getWrapped: (future: PyAwaitable) => Promise<[unknown, string]>;
 
   onDestroy(() => {
-    disposed = true;
+    controller.abort();
     if (ready) {
       pyConsole.stdout_callback = undefined;
       pyConsole.stderr_callback = undefined;
@@ -37,10 +38,10 @@
 
   onMount(async () => {
     const py = await getPy();
-    if (disposed)
+    if (signal.aborted)
       return;
-    await initConsole();
-    if (disposed)
+    await initConsole(signal);
+    if (signal.aborted)
       return;
     pyConsole = py.globals.get("console");
     complete = py.globals.get("complete");
@@ -53,7 +54,7 @@
   });
 
   export function pushLog(item: Item, behind?: Item) {
-    if (disposed)
+    if (signal.aborted)
       return;
     if (!log.length)
       return void (log = [item]);
