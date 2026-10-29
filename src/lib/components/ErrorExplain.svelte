@@ -4,6 +4,7 @@
   import { explain } from "$lib/examples/explain";
   import { renderMarkdown } from "$lib/markdown";
   import { onMount } from "svelte";
+  import { toast } from "svelte-sonner";
   import { cubicIn, cubicOut } from "svelte/easing";
   import { scale } from "svelte/transition";
 
@@ -13,15 +14,29 @@
 
   let html = "";
 
-  async function runExplain({ traceback, code }: Error) {
+  async function runExplain({ traceback, code }: Error, signal: AbortSignal) {
     let output = "";
-    for await (const delta of explain(traceback, code)) {
-      output += delta;
-      html = await renderMarkdown(output, ["python"]);
+    try {
+      for await (const delta of explain(traceback, code, signal)) {
+        if (signal.aborted)
+          break;
+        output += delta;
+        const nextHtml = await renderMarkdown(output, ["python"]);
+        if (!signal.aborted)
+          html = nextHtml;
+      }
+    }
+    catch (error) {
+      if (!signal.aborted)
+        toast.error(String(error));
     }
   }
 
-  onMount(() => errorInfo && runExplain(errorInfo));
+  onMount(() => {
+    const controller = new AbortController();
+    errorInfo && runExplain(errorInfo, controller.signal);
+    return () => controller.abort();
+  });
 
   let ref: HTMLDivElement;
 </script>
