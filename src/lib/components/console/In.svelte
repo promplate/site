@@ -18,7 +18,7 @@
     <InlineCode {text}></InlineCode>
     <ButtonGroup>
       <Copy {text} />
-      <button on:click class="i-mingcute-play-fill" />
+      <button aria-label="Run code" on:click class="i-mingcute-play-fill" />
     </ButtonGroup>
   </div>
 {:else}

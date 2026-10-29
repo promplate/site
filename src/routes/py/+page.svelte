@@ -13,7 +13,7 @@
       <div class="<lg:hidden" />
       <div class="relative flex flex-col gap-6 lg:translate-y-10 lg:items-end">
         <div class="absolute text-50 <lg:hidden -translate-y-30">
-          <a class="text-white/30 transition-color hover:text-white/40" href="https://pypi.org/project/promplate/">
+          <a class="text-white/30 transition-color hover:text-white/40" href="https://pypi.org/project/promplate/" aria-label="Promplate on PyPI">
             <div class="i-simple-icons-pypi" />
           </a>
         </div>
@@ -40,12 +40,12 @@
       <div class="w-full flex flex-col items-center gap-4 lg:items-end">
         <div class="h-1.2 w-60% bg-hero-charlie-brown-white/10 lg:w-85%" />
         <footer class="flex flex-row items-center text-lg -mt-2 [&>a]:(rounded-md p-2) [&>a:hover]:(bg-white/5)">
-          <a href="https://github.com/promplate/core"><div class="i-mdi-github-face" /></a>
-          <a href="https://github.com/promplate/core/issues"><div class="i-ph-bug-fill" /></a>
-          <a href="https://github.com/promplate/core/discussions/categories/q-a"><div class="i-heroicons-chat-bubble-left-ellipsis-solid" /></a>
-          <a href="mailto:me@promplate.dev"><div class="i-ion-ios-mail" /></a>
-          <a href="https://docs.py.promplate.dev/"><div class="i-ic-round-local-library" /></a>
-          <a href="/playground"><div class="i-material-symbols-rocket-launch-rounded" /></a>
+          <a href="https://github.com/promplate/core" aria-label="GitHub repository"><div class="i-mdi-github-face" /></a>
+          <a href="https://github.com/promplate/core/issues" aria-label="Report an issue"><div class="i-ph-bug-fill" /></a>
+          <a href="https://github.com/promplate/core/discussions/categories/q-a" aria-label="Ask a question"><div class="i-heroicons-chat-bubble-left-ellipsis-solid" /></a>
+          <a href="mailto:me@promplate.dev" aria-label="Email the author"><div class="i-ion-ios-mail" /></a>
+          <a href="https://docs.py.promplate.dev/" aria-label="API documentation"><div class="i-ic-round-local-library" /></a>
+          <a href="/playground" aria-label="Open playground"><div class="i-material-symbols-rocket-launch-rounded" /></a>
         </footer>
       </div>
     </div>

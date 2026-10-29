@@ -10,7 +10,7 @@
 
   <ButtonGroup>
     <Copy {text} />
-    <button on:click class="i-majesticons-lightbulb-shine" />
+    <button aria-label="Explain error" on:click class="i-majesticons-lightbulb-shine" />
   </ButtonGroup>
 
 </div>

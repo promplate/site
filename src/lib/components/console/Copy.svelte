@@ -17,4 +17,4 @@
   }
 </script>
 
-<button on:click={handleClick} class="i-icon-park-twotone-copy" />
+<button aria-label="Copy output" on:click={handleClick} class="i-icon-park-twotone-copy" />
