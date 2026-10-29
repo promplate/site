@@ -202,7 +202,7 @@
       <div class="group flex flex-row" class:animate-pulse={loading || !ready}>
         <ConsolePrompt prompt={status === "incomplete" ? "..." : ">>>"} />
         <!-- svelte-ignore a11y-autofocus -->
-        <input aria-label="Python console" autofocus bind:this={inputRef} class="w-full bg-transparent outline-none" bind:value={input} type="text" on:keydown={onKeyDown} on:paste={onPaste} />
+        <input aria-label="Python console" autofocus readonly={!ready} bind:this={inputRef} class="w-full bg-transparent outline-none" bind:value={input} type="text" on:keydown={ready ? onKeyDown : undefined} on:paste={ready ? onPaste : undefined} />
       </div>
     </HeadlessConsole>
   </div>
