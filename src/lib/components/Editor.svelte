@@ -1,9 +1,11 @@
 <script lang="ts">
+  import type monaco from "monaco-editor-core";
+
   import { shikiToMonaco } from "@shikijs/monaco";
   import { getHighlighter } from "$lib/highlight";
-  import { onMount } from "svelte";
+  import { getAbortSignal } from "svelte";
 
-  let container: HTMLDivElement;
+  let editor: monaco.editor.IStandaloneCodeEditor | undefined;
 
   export let source: string;
   export let showLineNum = false;
@@ -11,13 +13,15 @@
 
   export let lang = "python";
 
-  onMount(async () => {
+  async function initializeEditor(container: HTMLDivElement, signal: AbortSignal) {
     const monaco = await import("monaco-editor-core");
     const highlighter = await getHighlighter(lang);
+    if (signal.aborted)
+      return;
     monaco.languages.register({ id: lang });
     shikiToMonaco(highlighter, monaco);
 
-    const editor = monaco.editor.create(container, {
+    const instance = monaco.editor.create(container, {
       value: source.replaceAll("\r\n", "\n"),
       language: lang,
       theme: "vitesse-dark",
@@ -38,8 +42,14 @@
       automaticLayout: true,
     });
 
-    editor.onDidChangeModelContent(() => source = editor.getValue({ lineEnding: "\n", preserveBOM: false }));
-  });
+    editor = instance;
+    instance.onDidChangeModelContent(() => source = instance.getValue({ lineEnding: "\n", preserveBOM: false }));
+  }
+
+  function attachEditor(container: HTMLDivElement) {
+    initializeEditor(container, getAbortSignal());
+    return () => editor?.dispose();
+  }
 </script>
 
-<div bind:this={container} class="overflow-hidden b-1 b-white/10 rounded-md" />
+<div {@attach attachEditor} class="overflow-hidden b-1 b-white/10 rounded-md" />
