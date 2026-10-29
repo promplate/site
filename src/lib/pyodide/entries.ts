@@ -1,5 +1,5 @@
 import type { ClientOptions } from "openai";
-import type { ChatCompletionCreateParams, CompletionCreateParams } from "openai/src/resources/index.js";
+import type { ChatCompletionCreateParams, CompletionCreateParams } from "openai/resources";
 import type { PyCallable, PyProxy } from "pyodide/ffi";
 
 import { getPy } from "./init";
