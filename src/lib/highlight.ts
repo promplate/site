@@ -2,10 +2,17 @@ import type { ShikiTransformer } from "shiki";
 
 import { cacheOnce } from "./utils/cache";
 
+export async function getTheme() {
+  const { bundledThemes } = await import("shiki");
+  const { default: theme } = await bundledThemes["vitesse-dark"]();
+  const tokenColors = [...(theme.tokenColors ?? []), { scope: ["comment", "punctuation.definition.comment", "string.comment"], settings: { foreground: "#758575" } }];
+  return { ...theme, tokenColors };
+}
+
 export async function getHighlighter(lang: string) {
   return await cacheOnce(`shiki-${lang}`, async () => {
     const { createHighlighter } = await import("shiki");
-    return await createHighlighter({ themes: ["vitesse-dark"], langs: [lang] });
+    return await createHighlighter({ themes: [await getTheme()], langs: [lang] });
   })();
 }
 
