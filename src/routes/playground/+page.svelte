@@ -63,6 +63,7 @@
   }
 
   let ready: boolean;
+  let inputReady = false;
 
   $: if (ready) {
     (async () => {
@@ -72,6 +73,7 @@
       else {
         await pushMany(["from promplate import *", "from promplate.llm.openai.v1 import *", "# now all exposed APIs of promplate are available"], true);
       }
+      inputReady = true;
     }
     )();
   }
@@ -202,7 +204,7 @@
       <div class="group flex flex-row" class:animate-pulse={loading || !ready}>
         <ConsolePrompt prompt={status === "incomplete" ? "..." : ">>>"} />
         <!-- svelte-ignore a11y-autofocus -->
-        <input aria-label="Python console" autofocus readonly={!ready} bind:this={inputRef} class="w-full bg-transparent outline-none" bind:value={input} type="text" on:keydown={ready ? onKeyDown : undefined} on:paste={ready ? onPaste : undefined} />
+        <input aria-label="Python console" autofocus readonly={!inputReady} bind:this={inputRef} class="w-full bg-transparent outline-none" bind:value={input} type="text" on:keydown={inputReady ? onKeyDown : undefined} on:paste={inputReady ? onPaste : undefined} />
       </div>
     </HeadlessConsole>
   </div>
