@@ -194,7 +194,7 @@
         {#if type === "out"}
           <Out {text} />
         {:else if type === "in"}
-          <In {text} on:click={() => push(text)} />
+          <In {text} on:click={() => inputReady && push(text)} />
         {:else if type === "err"}
           <Err {text} on:click={() => showErrorExplain(index)} />
         {:else if type === "repr"}
