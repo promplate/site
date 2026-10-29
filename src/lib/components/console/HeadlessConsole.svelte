@@ -13,7 +13,8 @@
 
 <script lang="ts">
   import { getPy, initConsole } from "$lib/pyodide";
-  import { afterUpdate, beforeUpdate, onMount } from "svelte";
+  import { afterUpdate, beforeUpdate, onDestroy, onMount } from "svelte";
+  import { toast } from "svelte-sonner";
 
   export let ready = false;
   export let status: Status = "complete";
@@ -23,12 +24,33 @@
   export let autoScroll: false | "instant" | "smooth" = "smooth";
 
   let loading = 0;
+  const controller = new AbortController();
+  const { signal } = controller;
 
   let getWrapped: (future: PyAwaitable) => Promise<[unknown, string]>;
 
+  onDestroy(() => {
+    controller.abort();
+    if (ready) {
+      pyConsole.stdout_callback = undefined;
+      pyConsole.stderr_callback = undefined;
+    }
+  });
+
   onMount(async () => {
     const py = await getPy();
-    await initConsole();
+    if (signal.aborted)
+      return;
+    try {
+      await initConsole(signal);
+    }
+    catch (error) {
+      if (!signal.aborted)
+        toast.error("Unable to initialize console", { description: String(error), action: { label: "Reload", onClick: () => location.reload() } });
+      return;
+    }
+    if (signal.aborted)
+      return;
     pyConsole = py.globals.get("console");
     complete = py.globals.get("complete");
     getWrapped = py.globals.get("get_wrapped");
@@ -40,6 +62,8 @@
   });
 
   export function pushLog(item: Item, behind?: Item) {
+    if (signal.aborted)
+      return;
     if (!log.length)
       return void (log = [item]);
 

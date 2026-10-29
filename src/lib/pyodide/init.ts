@@ -47,7 +47,8 @@ async function initPy() {
 
 export const getPy = cacheSingleton(withToast(initPy, { loading: "preparing pyodide runtime", success: `successfully initialized pyodide runtime` }));
 
-export async function initConsole() {
+export async function initConsole(signal?: AbortSignal) {
   const [py, { default: initConsoleCode }] = await Promise.all([getPy(), import("./console.py?raw")]);
-  await py.runPythonAsync(initConsoleCode);
+  if (!signal?.aborted)
+    await py.runPythonAsync(initConsoleCode);
 }
