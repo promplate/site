@@ -14,6 +14,7 @@
 <script lang="ts">
   import { getPy, initConsole } from "$lib/pyodide";
   import { afterUpdate, beforeUpdate, onDestroy, onMount } from "svelte";
+  import { toast } from "svelte-sonner";
 
   export let ready = false;
   export let status: Status = "complete";
@@ -40,7 +41,14 @@
     const py = await getPy();
     if (signal.aborted)
       return;
-    await initConsole(signal);
+    try {
+      await initConsole(signal);
+    }
+    catch (error) {
+      if (!signal.aborted)
+        toast.error("Unable to initialize console", { description: String(error), action: { label: "Reload", onClick: () => location.reload() } });
+      return;
+    }
     if (signal.aborted)
       return;
     pyConsole = py.globals.get("console");
