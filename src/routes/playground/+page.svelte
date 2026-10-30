@@ -63,7 +63,6 @@
   }
 
   let ready: boolean;
-  let inputReady = false;
 
   $: if (ready) {
     (async () => {
@@ -73,12 +72,13 @@
       else {
         await pushMany(["from promplate import *", "from promplate.llm.openai.v1 import *", "# now all exposed APIs of promplate are available"], true);
       }
-      inputReady = true;
     }
     )();
   }
 
   function handleInput() {
+    if (!pyConsole)
+      return;
     push(input);
     if (input.trim() && input !== history[0]) {
       history.unshift(input);
@@ -127,6 +127,8 @@
           input += " ".repeat(4);
         }
         else {
+          if (!complete)
+            break;
           const [results, position] = complete(input);
           if (results.length === 1) {
             input = input.slice(0, position) + results[0];
@@ -172,6 +174,8 @@
   };
 
   const onPaste: ClipboardEventHandler<HTMLInputElement> = async (event) => {
+    if (!pyConsole)
+      return;
     event.preventDefault();
     const text = (event.clipboardData?.getData("text/plain") ?? await navigator.clipboard.readText());
 
@@ -194,7 +198,7 @@
         {#if type === "out"}
           <Out {text} />
         {:else if type === "in"}
-          <In {text} on:click={() => inputReady && push(text)} />
+          <In {text} on:click={() => push(text)} />
         {:else if type === "err"}
           <Err {text} on:click={() => showErrorExplain(index)} />
         {:else if type === "repr"}
@@ -204,7 +208,7 @@
       <div class="group flex flex-row" class:animate-pulse={loading || !ready}>
         <ConsolePrompt prompt={status === "incomplete" ? "..." : ">>>"} />
         <!-- svelte-ignore a11y-autofocus -->
-        <input aria-label="Python console" autofocus readonly={!inputReady} bind:this={inputRef} class="w-full bg-transparent outline-none" bind:value={input} type="text" on:keydown={inputReady ? onKeyDown : undefined} on:paste={inputReady ? onPaste : undefined} />
+        <input aria-label="Python console" autofocus bind:this={inputRef} class="w-full bg-transparent outline-none" bind:value={input} type="text" on:keydown={onKeyDown} on:paste={onPaste} />
       </div>
     </HeadlessConsole>
   </div>
