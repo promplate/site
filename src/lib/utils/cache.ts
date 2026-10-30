@@ -7,6 +7,8 @@ export function cacheOnce<T extends () => unknown>(key: string, target: T): T {
 
     const result = target();
     cache.set(key, result);
+    if (result instanceof Promise)
+      result.catch(() => cache.delete(key));
     return result;
   }) as T;
 }
@@ -20,6 +22,8 @@ export function cacheSingleton<T extends () => any>(target: T): T {
       return result;
 
     result = target();
+    if (result instanceof Promise)
+      result.catch(() => result = UNSET);
     return result;
   }) as T;
 }

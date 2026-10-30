@@ -36,9 +36,12 @@ async function initPy() {
 
   py.registerJsModule("openai", { OpenAI: PatchedOpenAI, version, __all__: [] });
 
-  await py.runPythonAsync(initCode);
-
-  toast.dismiss(info);
+  try {
+    await py.runPythonAsync(initCode);
+  }
+  finally {
+    toast.dismiss(info);
+  }
 
   pyodideReady.set(true);
 
