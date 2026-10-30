@@ -7,9 +7,7 @@
 </script>
 
 <svelte:head>
-  <title>{data.meta.title}</title>
   <meta property="og:type" content="article" />
-  <meta property="og:title" content={data.meta.title} />
 </svelte:head>
 
 <article class="m-10 max-w-3xl w-[calc(100vw-5rem)] flex flex-col gap-5 md:(m-20 w-[calc(100vw-10rem)]) 2xl:max-w-5xl xl:max-w-4xl">
