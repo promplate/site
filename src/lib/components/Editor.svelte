@@ -41,6 +41,7 @@
       automaticLayout: true,
     });
 
+    document.fonts.ready.then(() => monaco.editor.remeasureFonts());
     editor = instance;
     instance.onDidChangeModelContent(() => source = instance.getValue({ lineEnding: "\n", preserveBOM: false }));
   }
