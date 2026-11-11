@@ -71,7 +71,7 @@
   onMount(runDemo);
 </script>
 
-<div class="m-8 flex flex-col-reverse items-center gap-6 lg:m-20 md:m-16 sm:m-12 lg:flex-col">
+<main class="m-8 flex flex-col-reverse items-center gap-6 lg:m-20 md:m-16 sm:m-12 lg:flex-col">
   <div class="w-full flex flex-col-reverse gap-6 lg:flex-row">
     <div class="w-[calc(100vw-4rem)] 2xl:w-xl lg:w-md md:w-xl sm:w-lg xl:w-lg">
       <div class="mb-5 flex flex-row select-none items-center justify-center gap-1.5 whitespace-nowrap rounded bg-white/3 px-4 py-3 text-sm">
@@ -93,4 +93,4 @@
     </div>
   </div>
   <button class="w-full rounded bg-white py-3 text-neutral-9 font-bold tracking-widest uppercase transition-all hover:bg-white/90" class:op-80={running} on:click={runDemo}>show another example</button>
-</div>
+</main>
