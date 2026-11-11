@@ -25,7 +25,7 @@
       value: source.replaceAll("\r\n", "\n"),
       language: lang,
       theme: "vitesse-dark",
-      fontFamily: "fira code",
+      fontFamily: "Fira Code Variable",
       smoothScrolling: true,
       lineHeight: 1.6,
       minimap: { enabled: false },
