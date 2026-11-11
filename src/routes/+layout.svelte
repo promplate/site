@@ -2,7 +2,7 @@
   import "@unocss/reset/tailwind-compat.css";
   import "uno.css";
 
-  import { dev } from "$app/env";
+  import { building, dev } from "$app/env";
   import * as env from "$app/env/public";
   import { page } from "$app/state";
   import { Toaster } from "svelte-sonner";
@@ -11,7 +11,7 @@
 
   const { children } = $props();
   const ogTitle = $derived(page.data.meta?.title ?? "Promplate Docs");
-  const ogImage = $derived(`${page.url.origin}/og${page.url.pathname}`);
+  const ogImage = $derived(`${building ? "https://promplate.dev" : page.url.origin}/og${page.url.pathname}`);
   const ogDescription = $derived(page.data.meta?.description ?? "Documentation site for Promplate the prompting framework");
 </script>
 
