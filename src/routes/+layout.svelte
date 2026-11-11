@@ -10,7 +10,7 @@
   const headScripts = atob(env.PUBLIC_HEAD_SCRIPTS ?? "");
 
   const { children } = $props();
-  const ogTitle = $derived(page.data.meta?.title ?? "Promplate Docs");
+  const ogTitle = $derived(page.error ? `${page.status}: ${page.error.message}` : page.data.meta?.title ?? "Promplate Docs");
   const ogImage = $derived(`${page.url.origin}/og${page.url.pathname}`);
   const ogDescription = $derived(page.data.meta?.description ?? "Documentation site for Promplate the prompting framework");
 </script>
