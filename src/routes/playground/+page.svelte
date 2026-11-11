@@ -34,8 +34,9 @@
   let status: Status;
 
   let focusedError: { traceback: string; code: string };
+  let errorTrigger: HTMLButtonElement;
 
-  function showErrorExplain(index: number) {
+  function showErrorExplain(index: number, event: MouseEvent) {
     if (log[index]?.type !== "err")
       return;
 
@@ -43,6 +44,7 @@
 
     const code = log.slice(0, index).map(({ text, type }) => type === "in" ? reformatInputSource(text) : text).join("\n");
 
+    errorTrigger = event.currentTarget as HTMLButtonElement;
     focusedError = { traceback, code };
   }
 
@@ -194,7 +196,7 @@
         {:else if type === "in"}
           <In {text} on:click={() => push(text)} />
         {:else if type === "err"}
-          <Err {text} on:click={() => showErrorExplain(index)} />
+          <Err {text} on:click={event => showErrorExplain(index, event)} />
         {:else if type === "repr"}
           <Repr {text} />
         {/if}
@@ -221,7 +223,7 @@
 <Modal show={focusedError !== undefined}>
   <svelte:fragment slot="content">
     {#await import("$lib/components/ErrorExplain.svelte") then { default: ErrorExplain }}
-      <svelte:component this={ErrorExplain} bind:errorInfo={focusedError} />
+      <svelte:component this={ErrorExplain} bind:errorInfo={focusedError} trigger={errorTrigger} />
     {/await}
   </svelte:fragment>
 </Modal>
