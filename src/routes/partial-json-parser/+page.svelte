@@ -5,12 +5,13 @@
   import HighlightedTextarea from "$lib/components/HighlightedTextarea.svelte";
   import beautify from "json-beautify";
   import { parse } from "partial-json";
-  import { onMount } from "svelte";
+  import { onDestroy, onMount } from "svelte";
 
   let running = false;
   let loading = true;
   let json_string = "";
 
+  const controller = new AbortController();
   const nanPlaceholder = Math.random();
   const infPlaceholder = Math.random();
   const _infPlaceholder = Math.random();
@@ -33,6 +34,7 @@
     loading = true;
 
     const res = streamText({
+      abortSignal: controller.signal,
       model: "gpt-4.1-nano",
       messages: [
         { role: "system", content: "your answer should be a valid JSON string, with no code block. Just the JSON, without anything else." },
@@ -42,6 +44,8 @@
       apiKey: env.PUBLIC_OPENAI_API_KEY ?? "",
       baseURL: env.PUBLIC_OPENAI_BASE_URL ?? "https://api.openai.com/v1",
     });
+    // These unused promises also reject when the text stream fails or is aborted.
+    void Promise.allSettled([res.messages, res.steps, res.usage, res.totalUsage]);
     let rawOutput = "";
     try {
       for await (const delta of res.textStream) {
@@ -69,6 +73,7 @@
   };
 
   onMount(runDemo);
+  onDestroy(() => controller.abort());
 </script>
 
 <div class="m-8 flex flex-col-reverse items-center gap-6 lg:m-20 md:m-16 sm:m-12 lg:flex-col">
