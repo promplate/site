@@ -1,7 +1,5 @@
 <script lang="ts">
-  import { page } from "$app/state";
-
-  const base = `${page.url.href}/`;
+  const base = "/og/";
   let path = "<path>";
   let inputRef: HTMLInputElement;
 </script>
