@@ -6,4 +6,6 @@ export const variables = defineEnvVars({
   PUBLIC_OPENAI_API_KEY: { public: true, static: true, schema: value => value },
   PUBLIC_OPENAI_BASE_URL: { public: true, static: true, schema: value => value },
   PUBLIC_PYODIDE_INDEX_URL: { public: true, static: true, schema: value => value },
+  VERCEL_ENV: { public: true, static: true, schema: value => value },
+  VERCEL_URL: { public: true, static: true, schema: value => value },
 });
