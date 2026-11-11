@@ -3,6 +3,7 @@
 
   import { shikiToMonaco } from "@shikijs/monaco";
   import { getHighlighter } from "$lib/highlight";
+  import EditorWorker from "monaco-editor-core/esm/vs/editor/common/services/editorWebWorkerMain.js?worker";
   import { getAbortSignal } from "svelte";
 
   let editor: monaco.editor.IStandaloneCodeEditor | undefined;
@@ -17,6 +18,7 @@
     const [monaco, highlighter] = await Promise.all([import("monaco-editor-core"), getHighlighter(lang)]);
     if (signal.aborted)
       return;
+    globalThis.MonacoEnvironment = { getWorker: () => new EditorWorker() };
     monaco.languages.register({ id: lang });
     shikiToMonaco(highlighter, monaco);
 
