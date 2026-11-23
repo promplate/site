@@ -1,5 +1,6 @@
 import type { BuiltinLanguage } from "shiki";
 
+import { getTheme } from "./highlight";
 import { cacheOnce } from "./utils/cache";
 import rehypeShiki from "@shikijs/rehype";
 import rehypeStringify from "rehype-stringify";
@@ -9,7 +10,7 @@ import remarkRehype from "remark-rehype";
 import { unified } from "unified";
 
 async function getProcessor(langs: BuiltinLanguage[] = []) {
-  return unified().use(remarkParse).use(remarkCjkFriendly).use(remarkRehype).use(rehypeShiki, { theme: "vitesse-dark", langs }).use(rehypeStringify);
+  return unified().use(remarkParse).use(remarkCjkFriendly).use(remarkRehype).use(rehypeShiki, { theme: await getTheme(), langs }).use(rehypeStringify);
 }
 
 export async function renderMarkdown(text: string, langs: BuiltinLanguage[] = []) {
