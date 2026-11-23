@@ -7,7 +7,7 @@
   onMount(() => setTimeout(() => (forceShowArrow = false), 2000));
 </script>
 
-<div class="grid min-h-screen place-items-center whitespace-nowrap py-10 <sm:pb-6">
+<main class="grid min-h-screen place-items-center whitespace-nowrap py-10 <sm:pb-6">
   <div class="flex flex-col gap-2 lg:flex-row lg:gap-10">
     <div class="flex flex-col items-center justify-between gap-5 py-5 lg:items-end">
       <div class="<lg:hidden" />
@@ -54,7 +54,7 @@
       <CodeBlock code={examplePythonOutput} portal previous={[{ id: "main" }]} />
     </div>
   </div>
-</div>
+</main>
 
 <style>
   .show {

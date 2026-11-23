@@ -81,7 +81,7 @@
   }
 </script>
 
-<div class="mx-20 mt-20 max-w-100rem w-[calc(100vw-10rem)] flex flex-row gap-7">
+<main class="mx-20 mt-20 max-w-100rem w-[calc(100vw-10rem)] flex flex-row gap-7">
   <div class="relative h-[calc(100vh-10rem)] w-1/2 flex flex-col [&>*]:h-full">
     <Editor bind:source={prompt} lang="jinja" wrap showLineNum />
     <button aria-label="Run prompt" class="absolute bottom-5 right-5 w-10 overflow-hidden rounded-md bg-white/10 text-lg transition [&>div]:(absolute left-1/2 top-1/2 -translate-1/2) !h-10 active:bg-white/50 disabled:(bg-white text-neutral-8) hover:bg-white/15" on:click|trusted={reRun} disabled={loading || !py}>
@@ -96,4 +96,4 @@
     <Editor bind:source={script} />
     <CodeBlock code={output} collapse lang="markdown" />
   </div>
-</div>
+</main>
