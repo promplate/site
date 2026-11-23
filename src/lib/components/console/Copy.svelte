@@ -1,19 +1,21 @@
 <script lang="ts">
-  import Markdown from "../Markdown.svelte";
-  import { md } from "$lib/markdown";
   import { toast } from "svelte-sonner";
 
   export let text: string;
 
   async function handleClick() {
-    text = text.trimEnd();
+    const source = text.trimEnd();
+    try {
+      await navigator.clipboard.writeText(source);
+    }
+    catch {
+      toast.error("failed to copy to clipboard");
+      return;
+    }
 
-    const n = text.split("\n").length;
+    const n = source.split("\n").length;
 
-    const html = await md`successfully copied \`${n}\` ${n === 1 ? "line" : "lines"} to clipboard`;
-
-    toast.success(Markdown, { componentProps: { html } });
-    navigator.clipboard.writeText(text);
+    toast.success(`successfully copied ${n} ${n === 1 ? "line" : "lines"} to clipboard`);
   }
 </script>
 
