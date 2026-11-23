@@ -25,7 +25,7 @@
       value: source.replaceAll("\r\n", "\n"),
       language: lang,
       theme: "vitesse-dark",
-      fontFamily: "fira code",
+      fontFamily: "Fira Code Variable",
       smoothScrolling: true,
       lineHeight: 1.6,
       minimap: { enabled: false },
@@ -42,6 +42,7 @@
       automaticLayout: true,
     });
 
+    document.fonts.ready.then(() => monaco.editor.remeasureFonts());
     editor = instance;
     instance.onDidChangeModelContent(() => source = instance.getValue({ lineEnding: "\n", preserveBOM: false }));
   }

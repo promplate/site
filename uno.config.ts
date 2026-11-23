@@ -56,7 +56,7 @@ const typography = presetTypography<Theme>({
 const config = defineConfig({
   extractors: [extractorSvelte()],
   transformers: [transformerVariantGroup(), transformerDirectives()],
-  presets: [presetWind3({ preflight: "on-demand" }), presetWebFonts({ provider: "bunny", fonts: { mono: "Fira Code:300,400,500,600,700" } }), presetIcons(), presetHeroPatterns(), typography],
+  presets: [presetWind3({ preflight: "on-demand" }), presetWebFonts({ provider: "none", fonts: { mono: "Fira Code Variable" } }), presetIcons(), presetHeroPatterns(), typography],
 });
 
 export default config;

@@ -1,4 +1,5 @@
 <script>
+  import "@fontsource-variable/fira-code";
   import "@unocss/reset/tailwind-compat.css";
   import "uno.css";
 
