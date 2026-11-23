@@ -14,8 +14,7 @@
   export let lang = "python";
 
   async function initializeEditor(container: HTMLDivElement, signal: AbortSignal) {
-    const monaco = await import("monaco-editor-core");
-    const highlighter = await getHighlighter(lang);
+    const [monaco, highlighter] = await Promise.all([import("monaco-editor-core"), getHighlighter(lang)]);
     if (signal.aborted)
       return;
     monaco.languages.register({ id: lang });
