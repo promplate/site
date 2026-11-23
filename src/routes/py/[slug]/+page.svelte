@@ -3,7 +3,7 @@
 
   const { data } = $props();
 
-  const meta: Post = $derived(data.meta);
+  const meta: Omit<Post, "slug"> = $derived(data.meta);
 </script>
 
 <svelte:head>
