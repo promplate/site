@@ -4,15 +4,16 @@
   import { explain } from "$lib/examples/explain";
   import { renderMarkdown } from "$lib/markdown";
   import { onMount } from "svelte";
-  import { toast } from "svelte-sonner";
   import { cubicIn, cubicOut } from "svelte/easing";
   import { scale } from "svelte/transition";
 
   interface Error { traceback: string; code: string }
 
   export let errorInfo: Error | undefined;
+  export let trigger: HTMLButtonElement;
 
   let html = "";
+  let failure = "";
 
   async function runExplain({ traceback, code }: Error, signal: AbortSignal) {
     let output = "";
@@ -28,11 +29,19 @@
     }
     catch (error) {
       if (!signal.aborted)
-        toast.error(String(error));
+        failure = String(error);
     }
   }
 
+  let dialog: HTMLDialogElement;
+
+  function close() {
+    dialog.close();
+    trigger.focus();
+  }
+
   onMount(() => {
+    dialog.showModal();
     const controller = new AbortController();
     errorInfo && runExplain(errorInfo, controller.signal);
     return () => controller.abort();
@@ -41,21 +50,24 @@
   let ref: HTMLDivElement;
 </script>
 
-<div class="mt-30vh h-full max-w-lg w-3/4 lg:max-w-xl">
-  <div in:scale|global={{ start: 0.9, easing: cubicOut }} out:scale|global={{ start: 0.95, easing: cubicIn }} use:draggable={{ applyUserSelectHack: false, cancel: ref, bounds: { left: 20, top: 20, right: 20, bottom: 20 } }} class="flex flex-col cursor-grab rounded-lg bg-neutral-8/60 p-4 ring-1.3 ring-white/20 backdrop-blur-md xl:max-w-3xl" class:gap-3={html} class:sm:gap-4={html}>
-    <div class="flex flex-row select-none items-center justify-between">
-      <div class="flex flex-row items-center gap-1.5 rounded-md bg-emerald-3/10 px-1.5 py-1 text-emerald-3/80">
-        <div class="i-majesticons-lightbulb-shine text-base text-emerald-3" />
-        <div class="text-xs capitalize sm:text-sm">
-          error explainer
+<dialog bind:this={dialog} aria-label="Error explanation" on:cancel|preventDefault={() => (errorInfo = undefined)} class="fixed inset-0 m-0 h-full max-h-none max-w-none w-full overflow-visible border-0 bg-transparent p-0 text-inherit [&[open]]:grid [&[open]]:place-items-center backdrop:bg-transparent">
+  <div class="mt-30vh h-full max-w-lg w-3/4 lg:max-w-xl">
+    <div in:scale|global={{ start: 0.9, easing: cubicOut }} out:scale|global={{ start: 0.95, easing: cubicIn }} on:outroend={close} use:draggable={{ applyUserSelectHack: false, cancel: ref, bounds: { left: 20, top: 20, right: 20, bottom: 20 } }} class="flex flex-col cursor-grab rounded-lg bg-neutral-8/60 p-4 ring-1.3 ring-white/20 backdrop-blur-md xl:max-w-3xl" class:gap-3={html || failure} class:sm:gap-4={html || failure}>
+      <div class="flex flex-row select-none items-center justify-between">
+        <div class="flex flex-row items-center gap-1.5 rounded-md bg-emerald-3/10 px-1.5 py-1 text-emerald-3/80">
+          <div class="i-majesticons-lightbulb-shine text-base text-emerald-3" />
+          <div class="text-xs capitalize sm:text-sm">
+            error explainer
+          </div>
         </div>
+        <button aria-label="Close error explanation" class="rounded-md bg-transparent p-1.5 text-white/80 transition-colors hover:(bg-red-3/10 text-red-3/80)" on:click={() => (errorInfo = undefined)}>
+          <div class="i-material-symbols-close-rounded" />
+        </button>
       </div>
-      <button aria-label="Close error explanation" class="rounded-md bg-transparent p-1.5 text-white/80 transition-colors hover:(bg-red-3/10 text-red-3/80)" on:click={() => (errorInfo = undefined)}>
-        <div class="i-material-symbols-close-rounded" />
-      </button>
-    </div>
-    <div class="cursor-auto [&>article]:(<sm:text-xs lg:text-base)" bind:this={ref}>
-      <Markdown {html} />
+      <div class="cursor-auto [&>article]:(<sm:text-xs lg:text-base)" bind:this={ref}>
+        <Markdown {html} />
+        <p role="alert" class="text-red-4">{failure}</p>
+      </div>
     </div>
   </div>
-</div>
+</dialog>
