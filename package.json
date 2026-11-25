@@ -41,7 +41,7 @@
     "eslint": "^10.0.0",
     "eslint-plugin-format": "^2.0.0",
     "eslint-plugin-svelte": "^3.0.0",
-    "mdsvex": "^0.12.3",
+    "mdsvex": "^1.0.0",
     "monaco-editor-core": "^0.57.0",
     "rehype-autolink-headings": "^7.1.0",
     "rehype-slug": "^6.0.0",
